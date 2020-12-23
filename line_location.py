@@ -78,7 +78,6 @@ class line_location():
 
 # Testing, 1 second movement
 def main():
-    import time
     sim = line_location(100)
     for i in range(100):
         moves = random.choices([-1,-2,0,1,2],k = 2)

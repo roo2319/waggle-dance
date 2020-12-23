@@ -4,6 +4,8 @@ from scipy.special import expit
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
 
+
+
 class CTRNN():
     def __init__(self, genome=None):
         if genome == None:
@@ -25,9 +27,9 @@ class CTRNN():
         # First we calculate the change for each hidden node based on external inputs
         delta = np.multiply(externalInputs, self.inputWeights) + np.matmul(self.outputs, self.weights)
         # Then we update the state of each hidden node
-        self.states = np.multiply(stepsize * self.rTaus, (delta - self.states))
+        self.states = np.multiply(stepsize * self.rTaus, (np.multiply(self.gains,delta) - self.states))
         # Lastly we can update the outputs of each hidden node
-        self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
+        self.outputs = expit((self.states + self.biases))
         
         # We can now calculate the external output. 
         return np.multiply(self.outputWeights,self.outputs)[:self.outputCount]
@@ -68,7 +70,8 @@ class Genome():
         self.biases = biases
 
         if gains is None:
-            gains = np.random.normal(size=(hidden))
+            # gains = np.random.normal(size=(hidden))
+            gains = np.ones((hidden))
         self.gains = gains
 
         if taus is None:
@@ -85,6 +88,14 @@ class Genome():
         self.biases        += np.random.normal(0,0.2,self.biases.shape)
         self.gains         += np.random.normal(0,0.2,self.gains.shape)
         self.taus          += np.random.normal(0,0.2,self.taus.shape)
+
+        
+        self.inputWeights   = np.clip(self.inputWeights,-16,16)
+        self.outputWeights  = np.clip(self.outputWeights,-16,16)
+        self.weights        = np.clip(self.weights,-16,16)
+        self.biases         = np.clip(self.biases,-16,16)
+        self.gains          = np.clip(self.gains,-10,10)
+        self.taus           = np.clip(self.taus,0.01,100)
 
     def copy(self):
         return Genome(self.inputsCount, self.hiddenCount, self.outputsCount, np.copy(self.inputWeights),
