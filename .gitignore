@@ -1,6 +1,3 @@
-/config-ctrnn
-/evolve-ctrnn.py
-/poglog.txt
-/test-ctrnn.py
-/winner-ctrnn
+/logs
 /__pycache__
+best_genome.pkl

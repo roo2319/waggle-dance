@@ -27,20 +27,19 @@ class CTRNN():
         # First we calculate the change for each hidden node based on external inputs
         delta = np.multiply(externalInputs, self.inputWeights) + np.matmul(self.outputs, self.weights)
         # Then we update the state of each hidden node
-        self.states = np.multiply(stepsize * self.rTaus, (np.multiply(self.gains,delta) - self.states))
+        self.states += np.multiply(stepsize * self.rTaus, (np.multiply(self.gains,delta) - self.states))
         # Lastly we can update the outputs of each hidden node
         self.outputs = expit((self.states + self.biases))
-        
         # We can now calculate the external output. 
         return np.multiply(self.outputWeights,self.outputs)[:self.outputCount]
-        # print(delta)
-        # print(self.states)
-        # print(self.outputs)
     
     def reset(self):
         self.states  = np.zeros(self.states.shape)
         self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
 
+    def randomizeStates(self,low,high):
+        self.states  = np.random.uniform(low,high,self.states.shape)
+        self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
         
 
 class Genome():
@@ -75,7 +74,7 @@ class Genome():
         self.gains = gains
 
         if taus is None:
-            taus = np.random.normal(size=(hidden))
+            taus = np.ones((hidden))
         self.taus = taus
         self.rTaus = np.reciprocal(self.taus)
 
@@ -103,6 +102,15 @@ class Genome():
                       np.copy(self.gains), np.copy(self.taus))
 
 if __name__ == '__main__':
-    nn = CTRNN()
+    # Simple oscillator example, taken from randall beer
+    genome = Genome(0,2,0,[],[],np.array([[4.5,-1],[1,4.5]]),[-2.75,-1.75],None,None)
+    nn     = CTRNN(genome)
+    nn.randomizeStates(-0.5,0.5)
+    # exit()
+    time = 0
+    while time < 250:
+        nn.eulerStep([],0.01)
+        time += 0.01
+        print(nn.outputs)
 
     
