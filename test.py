@@ -29,11 +29,9 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
     sender.reset()
     receiver.reset()
     # Run the given simulation for up to num_steps time steps.
-    while sim.t < 2:
+    while sim.t < 3:
         act1 = sender.eulerStep(sim.getState(True),time_const)
-        receiverinputs = sim.getState(False)
-        receiverinputs[0] = goal
-        act2 = receiver.eulerStep(receiverinputs,time_const)
+        act2 = receiver.eulerStep(sim.getState(False),time_const)
         senderdx = sim.motor(act1[0])
         receiverdx = sim.motor(act2[0])
         # We can model force here
