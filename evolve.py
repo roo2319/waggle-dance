@@ -58,7 +58,7 @@ def initialise(pop_size):
 # Calculate fitness score for each member of the population
 def assess(pop, pool):
     global tasks 
-    goals = [0.55,0.65,0.75,0.85,0.95]
+    goals = [random.uniform(0.5,1) for _ in range(20)]
     tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),goal) for goal in goals]
     pop = [(x,tasks) for x in pop]
     pop = pool.starmap(assess_item, pop)
@@ -88,6 +88,8 @@ def mutate_item(item,tasks):
 
 
 # Replace 0 fitness members of the population with strong fitness members
+# Potentially combine selection and mutation so that successful mutations remove weak genomes
+# Rank based selection could be good
 def select(pop):
     size = len(pop)
     survivors = (9*size)//10
