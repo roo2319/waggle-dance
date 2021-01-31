@@ -1,10 +1,15 @@
 import pickle
 import random
+import sys
 import line_location
 import ctrnn
 
 # load the winner
-with open('best_genome.pkl', 'rb') as f:
+if len(sys.argv) < 2:
+    print("Usage: py ./test.py genome_name.pkl")
+    exit()
+
+with open(sys.argv[1], 'rb') as f:
     c = pickle.load(f)
 
 print('Loaded genome:')
