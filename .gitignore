@@ -1,3 +1,4 @@
 /logs
+/models
 /__pycache__
 best_genome.pkl
