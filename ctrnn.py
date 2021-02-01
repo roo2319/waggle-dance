@@ -27,9 +27,9 @@ class CTRNN():
         # First we calculate the change for each hidden node based on external inputs
         delta = np.multiply(externalInputs, self.inputWeights) + np.matmul(self.outputs, self.weights)
         # Then we update the state of each hidden node
-        self.states += np.multiply(stepsize * self.rTaus, (np.multiply(self.gains,delta) - self.states))
+        self.states += np.multiply(stepsize * self.rTaus, (delta - self.states))
         # Lastly we can update the outputs of each hidden node
-        self.outputs = expit((self.states + self.biases))
+        self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
         # We can now calculate the external output. 
         return np.multiply(self.outputWeights,self.outputs)[:self.outputCount]
     
@@ -43,38 +43,38 @@ class CTRNN():
         
 
 class Genome():
-    def __init__(self,inputs=3,hidden=3,outputs=1,iWeights=None,oWeights=None,weights=None,
+    def __init__(self,inputsCount=3,hiddenCount=3,outputsCount=1,iWeights=None,oWeights=None,weights=None,
                 biases=None, gains=None, taus=None):
         # Weights = 2D array 
-        self.inputsCount  = inputs
-        self.hiddenCount  = hidden
-        self.outputsCount = outputs
-        self.size = inputs + hidden + outputs
+        self.inputsCount  = inputsCount
+        self.hiddenCount  = hiddenCount
+        self.outputsCount = outputsCount
+        self.size = inputsCount + hiddenCount + outputsCount
 
         # Each input/output is connected to exactly one hidden node
         if iWeights is None:
-            iWeights = np.random.normal(size=(inputs))
+            iWeights = np.random.normal(size=(inputsCount))
         self.inputWeights = iWeights
         
         if oWeights is None:
-            oWeights = np.random.normal(size=(outputs))
+            oWeights = np.random.normal(size=(outputsCount))
         self.outputWeights = oWeights
 
         if weights is None:
-            weights = np.random.normal(size=(hidden,hidden))
+            weights = np.random.normal(size=(hiddenCount,hiddenCount))
         self.weights = weights
 
         if biases is None: 
-            biases = np.random.normal(size=(hidden)) 
+            biases = np.random.normal(size=(hiddenCount)) 
         self.biases = biases
 
         if gains is None:
             # gains = np.random.normal(size=(hidden))
-            gains = np.ones((hidden))
+            gains = np.ones((hiddenCount))
         self.gains = gains
 
         if taus is None:
-            taus = np.ones((hidden))
+            taus = np.ones((hiddenCount))
         self.taus = taus
         self.rTaus = np.reciprocal(self.taus)
 
