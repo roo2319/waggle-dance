@@ -53,19 +53,23 @@ class Genome():
 
         # Each input/output is connected to exactly one hidden node
         if iWeights is None:
-            iWeights = np.random.normal(size=(inputsCount))
+            # iWeights = np.random.normal(size=(inputsCount))
+            iWeights = np.zeros(inputsCount)
         self.inputWeights = iWeights
         
         if oWeights is None:
-            oWeights = np.random.normal(size=(outputsCount))
+            # oWeights = np.random.normal(size=(outputsCount))
+            oWeights = np.zeros(outputsCount)
         self.outputWeights = oWeights
 
         if weights is None:
-            weights = np.random.normal(size=(hiddenCount,hiddenCount))
+            # weights = np.random.normal(size=(hiddenCount,hiddenCount))
+            weights = np.zeros((hiddenCount,hiddenCount))
         self.weights = weights
 
         if biases is None: 
-            biases = np.random.normal(size=(hiddenCount)) 
+            # biases = np.random.normal(size=(hiddenCount)) 
+            biases = np.zeros(hiddenCount)
         self.biases = biases
 
         if gains is None:
@@ -80,6 +84,7 @@ class Genome():
 
 
     # Apply a gaussian mutation of 0.2 to every parameter
+    # Potentially this could be multiplicative
     def mutate(self):
         self.inputWeights  += np.random.normal(0,0.2,self.inputWeights.shape)
         self.outputWeights += np.random.normal(0,0.2,self.outputWeights.shape)
@@ -94,7 +99,7 @@ class Genome():
         self.weights        = np.clip(self.weights,-16,16)
         self.biases         = np.clip(self.biases,-16,16)
         self.gains          = np.clip(self.gains,-10,10)
-        self.taus           = np.clip(self.taus,0.01,100)
+        self.taus           = np.clip(self.taus,1,100)
 
     def copy(self):
         return Genome(self.inputsCount, self.hiddenCount, self.outputsCount, np.copy(self.inputWeights),
@@ -102,7 +107,7 @@ class Genome():
                       np.copy(self.gains), np.copy(self.taus))
 
 if __name__ == '__main__':
-    # Simple oscillator example, taken from randall beer
+    # Simple oscillator example, taken from Randall Beer
     genome = Genome(0,2,0,[],[],np.array([[4.5,-1],[1,4.5]]),[-2.75,-1.75],None,None)
     nn     = CTRNN(genome)
     nn.randomizeStates(-0.5,0.5)
