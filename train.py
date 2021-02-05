@@ -11,6 +11,9 @@ import evolve
 import line_location
 
 simulation_seconds = 3
+ntrials = 5
+aggregate_fitness = evolve.rank_reduce
+maxfitness = aggregate_fitness([1]*ntrials)
 time_const = line_location.line_location.timestep
 
 def fitness(genome,tasks):
@@ -36,9 +39,8 @@ def fitness(genome,tasks):
 
         fitnesses.append(fitness)
 
-            #print("{0} fitness {1}".format(net, fitness))
 
-    return evolve.rank_reduce(fitnesses)
+    return aggregate_fitness(fitnesses)/maxfitness
 
 
 def train(pop_size=100, max_gen=1, write_every=1, file=None):
@@ -48,13 +50,13 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
     with Pool(processes=cpu_count()) as pool:
         # goals = [0.55,0.65,0.75,0.85,0.95]
         # tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),goal) for goal in goals]
-        tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(5)]
+        tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
 
+        batch_start = time.time()
         pop = evolve.initialise(pop_size)
         pop = evolve.assess(pop, pool, tasks, fitness)
         generation = 0
-        batch_start = time.time()
         while generation < max_gen:
             if file != None and generation % 20 == 0:
                 evolve.log_fitness(pop, generation, None)
@@ -65,11 +67,11 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             # goals = [0.55,0.65,0.75,0.85,0.95]
             # pos = (random.uniform(0,0.3),random.uniform(0,0.3))
             # tasks = [pos + (goal,) for goal in goals]
-            tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(5)]
+            tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
+            pop = evolve.assess(pop, pool, tasks, fitness)
             pop = evolve.rank_roulette_select(pop)
             pop = evolve.mutate(pop, pool, tasks, fitness)
-            pop = evolve.assess(pop, pool, tasks, fitness)
             # print(pop)
             if write_every and generation % write_every==0:
                 evolve.log_fitness(pop, generation, file)
@@ -82,7 +84,7 @@ if __name__ == '__main__':
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
         print(f"Logs are in {path}")
-        best = train(96,1000,file=f)
+        best = train(300,300,file=f)
         print(f"Best fitness: {best['fitness']}")
         with open("best_genome.pkl",'wb') as g:
             pickle.dump(best["genome"],g)
