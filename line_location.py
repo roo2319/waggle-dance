@@ -1,5 +1,6 @@
 from math import floor
 import random
+import numpy as np
 
 class line_location():
     timestep = 0.01
@@ -30,7 +31,10 @@ class line_location():
         
         if isSender:
             # This is where additional checks can be performed on the senders movement
-            self.senderPos = pos
+            # self.senderPos = pos
+
+            self.senderPos = np.clip(pos,0,0.35)
+
         else:
             self.receiverPos = pos
 
@@ -43,6 +47,10 @@ class line_location():
             return [contactSensor,self.senderPos,targetSensor]
         else:
             return [contactSensor,self.receiverPos,-1]
+
+    
+    def getLoggingData(self):
+        return (self.receiverPos, self.senderPos, self.t)
 
     
     def getAsciiState(self):
@@ -64,20 +72,22 @@ class line_location():
 
     # Threshold function
     def motor(self,val):
-        if val < 0.25:
-            return -0.01
-        elif val > 0.75: 
-            return 0.01
-        else:
-            return 0
+        # if val < 0.25:
+        #     return -0.01
+        # elif val > 0.75: 
+        #     return 0.01
+        # else:
+        #     return 0
+        return np.clip((val-0.5)/50,-0.01,0.01)
 
 # Testing, 1 second movement
 def main():
-    sim = line_location(100)
+    sim = line_location(1)
     for i in range(100):
-        moves = random.choices([-1,-2,0,1,2],k = 2)
+        moves = random.choices([-0.01,-0.02,0,0.01,0.02],k = 2)
         sim.step(*moves)
         print(sim.getAsciiState())
+        print(sim.getState(True))
     print(f"Fitness is {sim.fitness()}\nSender has sensors {sim.getState(True)}\nReceiver has sensors {sim.getState(False)}")
 
 if __name__ == '__main__':
