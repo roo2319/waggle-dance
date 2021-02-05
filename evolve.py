@@ -70,7 +70,7 @@ def mutate_item(item,tasks,fitness):
     """
 
     child = item["genome"].copy()
-    child.mutate()
+    child.mutate(0.447)
     if fitness(child,tasks) > item["fitness"]:
         item["genome"] = child
 
@@ -89,6 +89,9 @@ def rank_reduce(fitnesses):
 
     s_fitnesses = sorted(fitnesses)
     return sum([elem/(i+1) for i,elem in enumerate(s_fitnesses)])
+
+def min_fitness(fitnesses):
+    return min(fitnesses)
 
 def initialise(pop_size):
     """

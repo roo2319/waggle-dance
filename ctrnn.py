@@ -53,28 +53,28 @@ class Genome():
 
         # Each input/output is connected to exactly one hidden node
         if iWeights is None:
-            # iWeights = np.random.normal(size=(inputsCount))
-            iWeights = np.zeros(inputsCount)
+            iWeights = np.random.normal(scale=2,size=(inputsCount))
+            # iWeights = np.zeros(inputsCount)
         self.inputWeights = iWeights
         
         if oWeights is None:
-            # oWeights = np.random.normal(size=(outputsCount))
-            oWeights = np.zeros(outputsCount)
+            oWeights = np.random.normal(scale=2,size=(outputsCount))
+            # oWeights = np.zeros(outputsCount)
         self.outputWeights = oWeights
 
         if weights is None:
-            # weights = np.random.normal(size=(hiddenCount,hiddenCount))
-            weights = np.zeros((hiddenCount,hiddenCount))
+            weights = np.random.normal(scale=2,size=(hiddenCount,hiddenCount))
+            # weights = np.zeros((hiddenCount,hiddenCount))
         self.weights = weights
 
         if biases is None: 
-            # biases = np.random.normal(size=(hiddenCount)) 
-            biases = np.zeros(hiddenCount)
+            biases = np.random.normal(scale=2,size=(hiddenCount)) 
+            # biases = np.zeros(hiddenCount)
         self.biases = biases
 
         if gains is None:
-            # gains = np.random.normal(size=(hidden))
-            gains = np.ones((hiddenCount))
+            gains = np.random.normal(scale=2,size=(hiddenCount))
+            # gains = np.ones((hiddenCount))
         self.gains = gains
 
         if taus is None:
@@ -85,13 +85,13 @@ class Genome():
 
     # Apply a gaussian mutation of 0.2 to every parameter
     # Potentially this could be multiplicative
-    def mutate(self):
-        self.inputWeights  += np.random.normal(0,0.2,self.inputWeights.shape)
-        self.outputWeights += np.random.normal(0,0.2,self.outputWeights.shape)
-        self.weights       += np.random.normal(0,0.2,self.weights.shape)
-        self.biases        += np.random.normal(0,0.2,self.biases.shape)
-        self.gains         += np.random.normal(0,0.2,self.gains.shape)
-        self.taus          += np.random.normal(0,0.2,self.taus.shape)
+    def mutate(self, variance):
+        self.inputWeights  += np.random.normal(0,variance,self.inputWeights.shape)
+        self.outputWeights += np.random.normal(0,variance,self.outputWeights.shape)
+        self.weights       += np.random.normal(0,variance,self.weights.shape)
+        self.biases        += np.random.normal(0,variance,self.biases.shape)
+        self.gains         += np.random.normal(0,variance,self.gains.shape)
+        self.taus          += np.random.normal(0,variance,self.taus.shape)
 
         
         self.inputWeights   = np.clip(self.inputWeights,-16,16)
