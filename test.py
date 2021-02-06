@@ -26,12 +26,12 @@ print("Initial conditions:")
 print("   Sender = {0:.4f}".format(sp))
 print(" Receiver = {0:.4f}".format(rp))
 print()
-fig, ax = plt.subplots(1,5)
+fig, ax = plt.subplots(3,5)
 i = 0
 for goal in [0.5,0.6,0.7,0.8,0.9]:
-    ry = []
-    sy = []
-    tx = []
+    displacement = [[],[],[]]
+    rsens = [[],[],[]]
+    ssens = [[],[],[]]
     sim = line_location.line_location(senderPos=sp,receiverPos=rp,goal=goal)
     time_const = line_location.line_location.timestep
 
@@ -43,8 +43,11 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
     receiver.reset()
     # Run the given simulation for up to num_steps time steps.
     while sim.t < 3:
-        act1 = sender.eulerStep(sim.getState(True),time_const)
-        act2 = receiver.eulerStep(sim.getState(False),time_const)
+        senderstate = sim.getState(True)
+        receiverstate = sim.getState(False)
+        act1 = sender.eulerStep(senderstate,time_const)
+        act2 = receiver.eulerStep(receiverstate,time_const)
+
         senderdx = sim.motor(act1[0])
         receiverdx = sim.motor(act2[0])
         # We can model force here
@@ -52,14 +55,30 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
         # We can model force here
         sim.step(senderdx,receiverdx)
         r,s,t = sim.getLoggingData()
-        ry.append(r)
-        sy.append(s)
-        tx.append(t)
-    ax[i].plot(tx,ry,label="receiver")
-    ax[i].plot(tx,sy,label="sender")
-    ax[i].plot(tx,[goal]*301,label="goal")
-    ax[i].set_title(f"Goal = {goal}\nFitness = {sim.fitness():.2f}")
-    ax[i].legend()
+
+        displacement[0].append(t)
+        displacement[1].append(r)
+        displacement[2].append(s)
+
+        for j in range(3):
+            rsens[j].append(receiverstate[j])
+            ssens[j].append(senderstate[j])
+
+    ax[0][i].plot(displacement[0],displacement[1],label="receiver")
+    ax[0][i].plot(displacement[0],displacement[2],label="sender")
+    ax[0][i].plot(displacement[0],[goal]*301,label="goal")
+    ax[0][i].set_title(f"Goal = {goal}\nReceiver = {sim.receiverPos:.2f}\nFitness = {sim.fitness():.2f}")
+    ax[0][i].legend()
+    ax[1][i].plot(displacement[0],rsens[0],label="Contact")
+    ax[1][i].plot(displacement[0],rsens[1],label="Self Position")
+    # ax[1][i].plot(displacement[0],rsens[2],label="Constant Value")
+    ax[1][i].set_title(f"Receiver Sensors")
+    ax[1][i].legend()
+    ax[2][i].plot(displacement[0],ssens[0],label="Contact")
+    ax[2][i].plot(displacement[0],ssens[1],label="Self Position")
+    ax[2][i].plot(displacement[0],ssens[2],label="Goal Distance")
+    ax[2][i].set_title(f"Sender Sensors")
+    ax[2][i].legend()
     i+=1
         # print(sim.getAsciiState())
 
