@@ -41,7 +41,7 @@ class line_location():
 
     # Return the sensors, that is the Position, Contact and Target Position sensors
     def getState(self,isSender):
-        contactSensor = 1 if abs(self.senderPos - self.receiverPos) <= 0.2 else 0
+        contactSensor = 1 if abs(self.senderPos - self.receiverPos) <= 0.4 else 0
         if isSender:
             targetSensor = abs(self.senderPos - self.goal)
             return [contactSensor,self.senderPos,targetSensor]
