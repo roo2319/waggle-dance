@@ -11,7 +11,7 @@ import evolve
 import line_location
 
 simulation_seconds = 3
-ntrials = 5
+ntrials = 20
 aggregate_fitness = evolve.rank_reduce
 maxfitness = aggregate_fitness([1]*ntrials)
 time_const = line_location.line_location.timestep
@@ -84,7 +84,8 @@ if __name__ == '__main__':
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
         print(f"Logs are in {path}")
-        best = train(300,300,file=f)
+        # initial pop could differ from final pop
+        best = train(96,1000,file=f)
         print(f"Best fitness: {best['fitness']}")
         with open("best_genome.pkl",'wb') as g:
             pickle.dump(best["genome"],g)
