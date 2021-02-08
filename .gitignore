@@ -2,3 +2,6 @@
 /models
 /__pycache__
 best_genome.pkl
+weird_tests.py
+checkpoint.pkl
+.gitignore
