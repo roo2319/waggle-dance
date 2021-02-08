@@ -10,6 +10,7 @@ import ctrnn
 import evolve
 import line_location
 
+
 simulation_seconds = 3
 ntrials = 20
 aggregate_fitness = evolve.rank_reduce
@@ -23,8 +24,7 @@ def fitness(genome,tasks):
 
     for sp,rp,goal in tasks:
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
-        sender.reset()
-        receiver.reset()
+
 
         # Run the given simulation for up to num_steps time steps.
         fitness = 0.0
@@ -48,8 +48,6 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
     random.seed()
 
     with Pool(processes=cpu_count()) as pool:
-        # goals = [0.55,0.65,0.75,0.85,0.95]
-        # tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),goal) for goal in goals]
         tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
 
@@ -62,17 +60,15 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
                 evolve.log_fitness(pop, generation, None)
                 print(f"Batch Time {time.time()-batch_start}")
                 batch_start = time.time()
+                with open("checkpoint.pkl",'wb') as g:
+                    pickle.dump(pop[0].genome,g)
 
             generation += 1
-            # goals = [0.55,0.65,0.75,0.85,0.95]
-            # pos = (random.uniform(0,0.3),random.uniform(0,0.3))
-            # tasks = [pos + (goal,) for goal in goals]
             tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
             pop = evolve.assess(pop, pool, tasks, fitness)
             pop = evolve.rank_roulette_select(pop)
             pop = evolve.mutate(pop, pool, tasks, fitness)
-            # print(pop)
             if write_every and generation % write_every==0:
                 evolve.log_fitness(pop, generation, file)
         best = pop[0]
@@ -84,9 +80,8 @@ if __name__ == '__main__':
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
         print(f"Logs are in {path}")
-        # initial pop could differ from final pop
         best = train(96,1000,file=f)
-        print(f"Best fitness: {best['fitness']}")
+        print(f"Best fitness: {best.fitness}")
         with open("best_genome.pkl",'wb') as g:
-            pickle.dump(best["genome"],g)
+            pickle.dump(best.genome,g)
     print(f"Finished training in {time.time() - start} seconds")

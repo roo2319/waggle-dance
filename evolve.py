@@ -2,6 +2,13 @@ import ctrnn
 import statistics
 import random
 
+class Citizen():
+    def __init__(self,genome=None,fitness=None):
+        if genome == None:
+            genome = ctrnn.Genome()
+        self.genome = genome
+        self.fitness = fitness
+
 def assess(pop, pool, tasks, fitness):
     """
     Calculate fitness score for each member across the given population
@@ -18,7 +25,7 @@ def assess(pop, pool, tasks, fitness):
 
     pop = [(x,tasks,fitness) for x in pop]
     pop = pool.starmap(assess_item, pop)
-    return sorted(pop, key = lambda i: i["fitness"], reverse=True) 
+    return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
 def assess_item(item,tasks,fitness):
     """
@@ -33,7 +40,7 @@ def assess_item(item,tasks,fitness):
         item, with an updated fitness value
 
     """
-    item["fitness"] = fitness(item["genome"],tasks)
+    item.fitness = fitness(item.genome,tasks)
     return item
 
 def mutate(pop, pool, tasks,fitness):
@@ -69,10 +76,10 @@ def mutate_item(item,tasks,fitness):
         item, with a mutated genome (if it has better fitness than the original)
     """
 
-    child = item["genome"].copy()
+    child = item.genome.copy()
     child.mutate(0.447)
-    if fitness(child,tasks) > item["fitness"]:
-        item["genome"] = child
+    if fitness(child,tasks) > item.fitness:
+        item.genome = child
 
     return item
 
@@ -106,8 +113,7 @@ def initialise(pop_size):
 
     pop = []
     while len(pop)<pop_size:
-        genome = ctrnn.Genome()
-        pop.append({"fitness":None, "genome":genome})
+        pop.append(Citizen())
 
     return pop
 
@@ -141,7 +147,7 @@ def truncation_select(pop):
     pop = pop[:survivors]
     for i in range(size-survivors):
         pop.append(pop[i].copy())
-    return sorted(pop[:size], key = lambda i: i["fitness"], reverse=True) 
+    return sorted(pop[:size], key = lambda i: i.fitness, reverse=True) 
 
 
 
@@ -157,7 +163,7 @@ def log_fitness(pop, gen, file=None):
     
     fitness = []
     for p in pop:
-        fitness.append(p["fitness"])
+        fitness.append(p.fitness)
 
     line = "{:4d}: max:{:.3f}, min:{:.3f}, mean:{:.3f}".format(gen,max(fitness),min(fitness),statistics.mean(fitness))
 
