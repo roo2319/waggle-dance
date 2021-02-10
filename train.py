@@ -45,8 +45,6 @@ def fitness(genome,tasks):
 
 def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
-    random.seed()
-
     with Pool(processes=cpu_count()) as pool:
         tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
@@ -75,7 +73,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
     return best
 
-if __name__ == '__main__':
+def main():
     start = time.time()
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
@@ -85,3 +83,6 @@ if __name__ == '__main__':
         with open("best_genome.pkl",'wb') as g:
             pickle.dump(best.genome,g)
     print(f"Finished training in {time.time() - start} seconds")
+
+if __name__ == '__main__':
+    main()

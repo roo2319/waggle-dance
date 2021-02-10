@@ -61,7 +61,7 @@ def mutate(pop, pool, tasks,fitness):
     pop = [(x,tasks,fitness) for x in pop]
     pop = pool.starmap(mutate_item,pop)
             
-    return pop
+    return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
 def mutate_item(item,tasks,fitness):
     """
@@ -127,8 +127,8 @@ def rank_roulette_select(pop):
     Return:
         A new population chosen by rank based roulette selection
     """
-    newpop = random.choices(pop,reversed(range(1,len(pop)+1)),k=len(pop))
-    return newpop
+    pop = random.choices(pop,reversed(range(1,len(pop)+1)),k=len(pop))
+    return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
 
 def truncation_select(pop):

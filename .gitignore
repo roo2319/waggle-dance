@@ -1,7 +1,10 @@
+.gitignore
+/__pycache__
 /logs
 /models
-/__pycache__
+benchmark.py
 best_genome.pkl
-weird_tests.py
 checkpoint.pkl
-.gitignore
+profile
+result.html
+weird_tests.py

@@ -2,6 +2,8 @@ from math import floor
 import random
 import numpy as np
 
+def quickClip(minV,maxV,value):
+    return max(minV,min(maxV,value))
 class line_location():
     timestep = 0.01
 
@@ -32,8 +34,8 @@ class line_location():
         if isSender:
             # This is where additional checks can be performed on the senders movement
             # self.senderPos = pos
-
-            self.senderPos = np.clip(pos,0,0.35)
+            
+            self.senderPos = quickClip(0,0.35,pos)
 
         else:
             self.receiverPos = pos
@@ -78,7 +80,7 @@ class line_location():
         #     return 0.01
         # else:
         #     return 0
-        return np.clip((val-0.5)/50,-0.01,0.01)
+        return quickClip(-0.01,0.01,(val-0.5)/50)
 
 # Testing, 1 second movement
 def main():

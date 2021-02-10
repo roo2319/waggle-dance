@@ -23,9 +23,11 @@ class CTRNN():
         self.rTaus         = genome.rTaus
 
     def eulerStep(self,externalInputs,stepsize):
-        externalInputs = np.pad(externalInputs,(0,self.hiddenCount-len(externalInputs)))
+        # externalInputs = np.pad(externalInputs,(0,self.hiddenCount-len(externalInputs)))
+        paddedInputs = np.zeros(self.hiddenCount)
+        paddedInputs[:self.inputsCount] = externalInputs
         # First we calculate the change for each hidden node based on external inputs
-        delta = np.multiply(externalInputs, self.inputWeights) + np.matmul(self.outputs, self.weights)
+        delta = np.multiply(paddedInputs, self.inputWeights) + np.matmul(self.outputs, self.weights)
         # Then we update the state of each hidden node
         self.states += np.multiply(stepsize * self.rTaus, (delta - self.states))
         # Lastly we can update the outputs of each hidden node
