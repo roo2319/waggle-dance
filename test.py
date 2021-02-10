@@ -48,12 +48,12 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
         act1 = sender.eulerStep(senderstate,time_const)
         act2 = receiver.eulerStep(receiverstate,time_const)
 
-        senderdx = sim.motor(act1[0])
-        receiverdx = sim.motor(act2[0])
+        senderOut = act1[0]
+        receiverOut = act2[0]
         # We can model force here
         # print(f"network thinks {act1,act2}")
         # We can model force here
-        sim.step(senderdx,receiverdx)
+        sim.step(senderOut,receiverOut)
         r,s,t = sim.getLoggingData()
 
         displacement[0].append(t)

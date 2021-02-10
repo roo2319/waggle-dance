@@ -16,7 +16,9 @@ class line_location():
             receiverPos = random.uniform(0,0.3)
         self.goal = goal
         self.senderPos = senderPos
+        self.senderVelocity = 0
         self.receiverPos = receiverPos
+        self.receiverVelocity = 0
         self.t = 0
 
     # Step, currently has no momentum
@@ -27,15 +29,17 @@ class line_location():
         self.updatePos(True,senderdx)
         self.updatePos(False,receieverdx)
 
-    def updatePos(self,isSender,dx):
+    def updatePos(self,isSender,output):
         pos = self.senderPos if isSender else self.receiverPos
+        # dx = self.velocityMotor(isSender,output)
+        dx = self.continuousMotor(output)
         pos += dx
         
         if isSender:
             # This is where additional checks can be performed on the senders movement
             # self.senderPos = pos
             
-            self.senderPos = quickClip(0,0.35,pos)
+            self.senderPos = quickClip(0,0.3,pos)
 
         else:
             self.receiverPos = pos
@@ -73,14 +77,35 @@ class line_location():
         # return max(1 - abs(self.senderPos-self.goal),0)
 
     # Threshold function
-    def motor(self,val):
-        # if val < 0.25:
-        #     return -0.01
-        # elif val > 0.75: 
-        #     return 0.01
-        # else:
-        #     return 0
+
+
+    def discreteMotor(self,val):
+        if val < 0.25:
+            return -0.01
+        elif val > 0.75: 
+            return 0.01
+        else:
+            return 0
+
+    def continuousMotor(self,val):
         return quickClip(-0.01,0.01,(val-0.5)/50)
+
+    def velocityMotor(self,isSender,val):
+        # Change me!
+        if val < 0.45:
+            delta = -0.001
+        elif val > 0.55: 
+            delta = 0.001
+        else:
+            delta = 0
+        if isSender:
+            self.senderVelocity = quickClip(-0.01,0.01,self.senderVelocity+delta)
+            return self.senderVelocity
+        else:
+            self.receiverVelocity = quickClip(-0.01,0.01,self.receiverVelocity+delta)
+            return self.receiverVelocity
+             
+
 
 # Testing, 1 second movement
 def main():

@@ -12,6 +12,7 @@ import line_location
 
 
 simulation_seconds = 3
+elitism = 1
 ntrials = 20
 aggregate_fitness = evolve.rank_reduce
 maxfitness = aggregate_fitness([1]*ntrials)
@@ -29,10 +30,10 @@ def fitness(genome,tasks):
         # Run the given simulation for up to num_steps time steps.
         fitness = 0.0
         while sim.t < simulation_seconds:
-            senderdx   = sim.motor(sender.eulerStep(sim.getState(True),time_const)[0])
-            receiverdx = sim.motor(receiver.eulerStep(sim.getState(False),time_const)[0])
+            senderOut   = sender.eulerStep(sim.getState(True),time_const)[0]
+            receiverOut = receiver.eulerStep(sim.getState(False),time_const)[0]
 
-            sim.step(senderdx,receiverdx)
+            sim.step(senderOut,receiverOut)
 
         fitness = sim.fitness()
 
@@ -65,7 +66,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
             pop = evolve.assess(pop, pool, tasks, fitness)
-            pop = evolve.rank_roulette_select(pop)
+            pop = evolve.selection(pop,elitism)
             pop = evolve.mutate(pop, pool, tasks, fitness)
             if write_every and generation % write_every==0:
                 evolve.log_fitness(pop, generation, file)

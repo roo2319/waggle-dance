@@ -117,6 +117,12 @@ def initialise(pop_size):
 
     return pop
 
+def selection(pop,elitism=0):
+    elites = pop[:elitism]
+    sel = rank_roulette_select(pop[elitism:])
+    return sorted(elites+sel, key = lambda i: i.fitness, reverse=True) 
+
+
 def rank_roulette_select(pop):
     """
     Perform roulette selection, weighted by rank rather than fitness
@@ -128,7 +134,7 @@ def rank_roulette_select(pop):
         A new population chosen by rank based roulette selection
     """
     pop = random.choices(pop,reversed(range(1,len(pop)+1)),k=len(pop))
-    return sorted(pop, key = lambda i: i.fitness, reverse=True) 
+    return pop
 
 
 def truncation_select(pop):
@@ -147,7 +153,7 @@ def truncation_select(pop):
     pop = pop[:survivors]
     for i in range(size-survivors):
         pop.append(pop[i].copy())
-    return sorted(pop[:size], key = lambda i: i.fitness, reverse=True) 
+    return pop 
 
 
 

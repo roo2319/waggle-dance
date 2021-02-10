@@ -25,10 +25,10 @@ def runtrial(c, task):
         act1 = sender.eulerStep(senderstate,time_const)
         act2 = receiver.eulerStep(receiverstate,time_const)
 
-        senderdx = sim.motor(act1[0])
-        receiverdx = sim.motor(act2[0])
+        senderOut = act1[0]
+        receiverOut = act2[0]
 
-        sim.step(senderdx,receiverdx)
+        sim.step(senderOut,receiverOut)
 
 
         # print(sim.getAsciiState())
