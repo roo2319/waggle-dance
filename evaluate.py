@@ -41,7 +41,7 @@ def runtrial(c, task):
 
 def main():
     if len(sys.argv) < 3:
-        print("Usage: py ./test.py genome_name.pkl ntrials")
+        print("Usage: py ./evaluate.py genome_name.pkl ntrials")
         exit()
 
     with open(sys.argv[1], 'rb') as f:
