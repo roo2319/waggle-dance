@@ -7,6 +7,13 @@ def sigmoid(x):
 
 
 class CTRNN():
+    """
+    Class implementing Continuous Time Recurrent Neural Networks
+
+    Parameters:
+        genome (Genome)
+    """
+    
     def __init__(self, genome=None):
         if genome == None:
             genome = Genome()
@@ -23,6 +30,17 @@ class CTRNN():
         self.rTaus         = genome.rTaus
 
     def eulerStep(self,externalInputs,stepsize):
+        """
+        Advance the CTRNN by (stepsize), setting the inputs to the network to
+        externalInputs
+
+        Parameters:
+            externalInputs (List(float)) : The inputs to the network at this timestep   
+            stepsize (float) : The change in time being calculated
+        
+        Return:
+            The outputs of the network at this timestep
+        """
         # externalInputs = np.pad(externalInputs,(0,self.hiddenCount-len(externalInputs)))
         paddedInputs = np.zeros(self.hiddenCount)
         paddedInputs[:self.inputsCount] = externalInputs
@@ -36,17 +54,48 @@ class CTRNN():
         return np.multiply(self.outputWeights,self.outputs)[:self.outputCount]
     
     def reset(self):
+        """
+        Set the internal states of the network to 0
+        """
         self.states  = np.zeros(self.states.shape)
         self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
 
     def randomizeStates(self,low,high):
+        """
+        Set the internal states of the network to random values between low and high
+
+        Parameters: 
+            low (float) 
+            high (float)
+        """
         self.states  = np.random.uniform(low,high,self.states.shape)
         self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
         
 
 class Genome():
+    """
+    The genotype of a CTRNN. This will be the target of the genetic algorithm.
+    For these networks all of the hidden nodes are fully connected to eachother, 
+    and can connect to up to one input node and up to one output node
+
+    Parameters:
+        inputsCount (int) : The number of external inputs to the network, < hiddenCount
+        hiddenCount (int) : The number of hidden nodes in the network
+        outputsCount (int) : The number of output nodes in the network, < hiddenCount
+        iWeights (np.array(float)) : A 1d list of weights from each input node to 
+                                     a hidden nodelength = inputsCount
+        oWeights (np.array(float)) : A 1d list of weights from each hidden node to 
+                                     it's connected output node, length = outputsCount
+        weights (np.array(float))  : A 2d array of weights between each hidden node,
+                                     shape = (hiddenCount,hiddenCount)
+        biases (np.array(float))   : The biases of each hidden node, length = hiddenCount
+        gains (np.array(float))    : The gains of each hidden node, length = hiddenCount
+        taus  (np.array(float))    : The time constants of each hidden node, length = hiddenCount
+        centerCrossing (bool)      : Determine if the CTRNN should be center crossing
+
+    """
     def __init__(self,inputsCount=3,hiddenCount=3,outputsCount=1,iWeights=None,oWeights=None,weights=None,
-                biases=None, gains=None, taus=None):
+                biases=None, gains=None, taus=None, centerCrossing = False):
         # Weights = 2D array 
         self.inputsCount  = inputsCount
         self.hiddenCount  = hiddenCount
@@ -56,44 +105,61 @@ class Genome():
         # Each input/output is connected to exactly one hidden node
         if iWeights is None:
             iWeights = np.random.normal(scale=2,size=(inputsCount))
+            # iWeights = np.random.uniform(-16,16,size=(inputsCount))
             # iWeights = np.zeros(inputsCount)
         self.inputWeights = iWeights
         
         if oWeights is None:
             oWeights = np.random.normal(scale=2,size=(outputsCount))
+            # oWeights = np.random.uniform(-16,16,size=(outputsCount))
             # oWeights = np.zeros(outputsCount)
         self.outputWeights = oWeights
 
         if weights is None:
             weights = np.random.normal(scale=2,size=(hiddenCount,hiddenCount))
-            # weights = np.zeros((hiddenCount,hiddenCount))
+            # weights = np.random.uniform(-16,16,size=(hiddenCount,hiddenCount))
+
         self.weights = weights
 
-        if biases is None: 
+        if centerCrossing == True:
+            biases = -0.5 * sum(weights)
+        elif biases is None: 
             biases = np.random.normal(scale=2,size=(hiddenCount)) 
-            # biases = np.zeros(hiddenCount)
+            # biases = np.random.uniform(-16,16,size=(hiddenCount))
+            # biases = np.ones(hiddenCount)
+
         self.biases = biases
 
         if gains is None:
             gains = np.random.normal(scale=2,size=(hiddenCount))
+            # gains = np.random.uniform(-25,25,size=(hiddenCount))
             # gains = np.ones((hiddenCount))
+
         self.gains = gains
 
         if taus is None:
             taus = np.ones((hiddenCount))
+            # taus = np.random.uniform(50,100,(hiddenCount))
         self.taus = taus
         self.rTaus = np.reciprocal(self.taus)
 
 
     # Apply a gaussian mutation of 0.2 to every parameter
     # Potentially this could be multiplicative
-    def mutate(self, variance):
-        self.inputWeights  += np.random.normal(0,variance,self.inputWeights.shape)
-        self.outputWeights += np.random.normal(0,variance,self.outputWeights.shape)
-        self.weights       += np.random.normal(0,variance,self.weights.shape)
-        self.biases        += np.random.normal(0,variance,self.biases.shape)
-        self.gains         += np.random.normal(0,variance,self.gains.shape)
-        self.taus          += np.random.normal(0,variance,self.taus.shape)
+    # Per parameter mutation scaling 
+    def mutate(self, stddev):
+        """
+        A method to mutate a genome by adding gaussian noise. 
+
+        Parameters:
+            stddev (float) : The standard deviation of the gaussian distribution to be drawn upon
+        """
+        self.inputWeights  += np.random.normal(0,stddev,self.inputWeights.shape)
+        self.outputWeights += np.random.normal(0,stddev,self.outputWeights.shape)
+        self.weights       += np.random.normal(0,stddev,self.weights.shape)
+        self.biases        += np.random.normal(0,stddev,self.biases.shape)
+        self.gains         += np.random.normal(0,stddev,self.gains.shape)
+        self.taus          += np.random.normal(0,stddev,self.taus.shape)
 
         
         self.inputWeights   = np.clip(self.inputWeights,-16,16)
@@ -104,9 +170,26 @@ class Genome():
         self.taus           = np.clip(self.taus,1,100)
 
     def copy(self):
+        """
+        A method to create a copy of a genome object
+
+        Return:
+            A genome object that is identical to the caller
+        """
         return Genome(self.inputsCount, self.hiddenCount, self.outputsCount, np.copy(self.inputWeights),
                       np.copy(self.outputWeights), np.copy(self.weights), np.copy(self.biases),
                       np.copy(self.gains), np.copy(self.taus))
+    
+    def __str__(self):
+        """
+        A string magic method to convert the object to a printable representation
+
+        Return:
+            String
+        """
+        return f"Input Weights: {self.inputWeights} \nOutput weights: {self.outputWeights}\n" +\
+               f"Weights: {self.weights} \nBiases: {self.biases} \n Gains: {self.gains} \n Taus: {self.taus}"
+        
 
 if __name__ == '__main__':
     # Simple oscillator example, taken from Randall Beer

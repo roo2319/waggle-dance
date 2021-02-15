@@ -5,7 +5,7 @@ import random
 class Citizen():
     def __init__(self,genome=None,fitness=None):
         if genome == None:
-            genome = ctrnn.Genome()
+            genome = ctrnn.Genome(centerCrossing=True)
         self.genome = genome
         self.fitness = fitness
 
@@ -78,9 +78,9 @@ def mutate_item(item,tasks,fitness):
 
     child = item.genome.copy()
     child.mutate(0.447)
-    if fitness(child,tasks) > item.fitness:
-        item.genome = child
-
+    cfitness = fitness(child,tasks)
+    if cfitness > item.fitness:
+        return Citizen(child,cfitness)
     return item
 
 def rank_reduce(fitnesses):

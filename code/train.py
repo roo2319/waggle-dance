@@ -12,7 +12,7 @@ import line_location
 
 
 simulation_seconds = 3
-elitism = 1
+elitism = 0
 ntrials = 20
 aggregate_fitness = evolve.rank_reduce
 maxfitness = aggregate_fitness([1]*ntrials)
@@ -59,7 +59,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
                 evolve.log_fitness(pop, generation, None)
                 print(f"Batch Time {time.time()-batch_start}")
                 batch_start = time.time()
-                with open("checkpoint.pkl",'wb') as g:
+                with open("models/checkpoint.pkl",'wb') as g:
                     pickle.dump(pop[0].genome,g)
 
             generation += 1
@@ -81,7 +81,7 @@ def main():
         print(f"Logs are in {path}")
         best = train(96,1000,file=f)
         print(f"Best fitness: {best.fitness}")
-        with open("best_genome.pkl",'wb') as g:
+        with open("models/best_genome.pkl",'wb') as g:
             pickle.dump(best.genome,g)
     print(f"Finished training in {time.time() - start} seconds")
 

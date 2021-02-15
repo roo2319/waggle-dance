@@ -41,12 +41,20 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
 
     sender.reset()
     receiver.reset()
+    vals = []
     # Run the given simulation for up to num_steps time steps.
     while sim.t < 3:
         senderstate = sim.getState(True)
         receiverstate = sim.getState(False)
+        # if sim.t < 1.5:
+        #     receiverstate[0] = 0
+        #     senderstate[0] = 0
+
         act1 = sender.eulerStep(senderstate,time_const)
         act2 = receiver.eulerStep(receiverstate,time_const)
+
+        vals.append(act1)
+        vals.append(act2)
 
         senderOut = act1[0]
         receiverOut = act2[0]
@@ -91,5 +99,6 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
     print("     Goal = {0:.4f}".format(sim.goal))
     print(f" fitness = {sim.fitness()}")
     print()
+    print(f"Max {max(vals)},Min {min(vals)}, Average {sum(vals)/len(vals)}")
 
 plt.show()
