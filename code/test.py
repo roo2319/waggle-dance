@@ -1,16 +1,25 @@
+import json
 import pickle
 import random
 import sys
-import matplotlib.pyplot as plt
-import line_location
-import ctrnn
 
-# load the winner
-if len(sys.argv) < 2:
-    print("Usage: py ./test.py genome_name.pkl")
+import matplotlib.pyplot as plt
+
+import ctrnn
+import line_location
+
+if len(sys.argv) < 3:
+    print("Usage: py ./test.py config.json genome_name.pkl")
     exit()
 
-with open(sys.argv[1], 'rb') as f:
+with open(sys.argv[1],'r') as config:
+    settings = json.load(config)
+
+simulation_seconds = settings.get("simulation_seconds",3)
+line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
+
+# load the winner
+with open(sys.argv[2], 'rb') as f:
     c = pickle.load(f)
 
 print('Loaded genome:')
@@ -43,7 +52,7 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
     receiver.reset()
     vals = []
     # Run the given simulation for up to num_steps time steps.
-    while sim.t < 3:
+    while sim.t < simulation_seconds:
         senderstate = sim.getState(True)
         receiverstate = sim.getState(False)
         # if sim.t < 1.5:

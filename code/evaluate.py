@@ -1,11 +1,24 @@
+import json
 import pickle
 import random
 import sys
-import matplotlib.pyplot as plt
-import line_location
-import ctrnn
 from multiprocessing import Pool, Value, cpu_count
-from statistics import stdev, mean
+from statistics import mean, stdev
+
+import matplotlib.pyplot as plt
+
+import ctrnn
+import line_location
+
+if len(sys.argv) < 4:
+    print("Usage: py ./evaluate.py config.json genome_name.pkl ntrials")
+    exit()
+
+with open(sys.argv[1],'r') as config:
+    settings = json.load(config)
+
+simulation_seconds = settings.get("simulation_seconds",3)
+line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
 
 
 def runtrial(c, task):
@@ -19,7 +32,7 @@ def runtrial(c, task):
     sender.reset()
     receiver.reset()
     # Run the given simulation for up to num_steps time steps.
-    while sim.t < 3:
+    while sim.t < simulation_seconds:
         senderstate = sim.getState(True)
         receiverstate = sim.getState(False)
         act1 = sender.eulerStep(senderstate,time_const)
@@ -40,15 +53,11 @@ def runtrial(c, task):
 
 
 def main():
-    if len(sys.argv) < 3:
-        print("Usage: py ./evaluate.py genome_name.pkl ntrials")
-        exit()
-
-    with open(sys.argv[1], 'rb') as f:
+    with open(sys.argv[2], 'rb') as f:
         c = pickle.load(f)
 
 
-    ntrials = int(sys.argv[2])
+    ntrials = int(sys.argv[3])
     success = 0
     absdist = 0
     

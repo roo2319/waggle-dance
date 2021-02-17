@@ -1,13 +1,25 @@
+import json
 import pickle
 import random
 import sys
-import matplotlib.pyplot as plt
-import line_location
-import ctrnn
 from multiprocessing import Pool, Value, cpu_count
-from statistics import stdev, mean
+from statistics import mean, stdev
+
+import matplotlib.pyplot as plt
 import numpy as np
 
+import ctrnn
+import line_location
+
+if len(sys.argv) < 3:
+    print("Usage: py ./meandistance.py config.json genome_name.pkl")
+    exit()
+
+with open(sys.argv[1],'r') as config:
+    settings = json.load(config)
+
+simulation_seconds = settings.get("simulation_seconds",3)
+line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
 
 def runtrial(c, goal):
     dist = 0
@@ -22,7 +34,7 @@ def runtrial(c, goal):
         sender.reset()
         receiver.reset()
         # Run the given simulation for up to num_steps time steps.
-        while sim.t < 3:
+        while sim.t < simulation_seconds:
             senderstate = sim.getState(True)
             receiverstate = sim.getState(False)
             act1 = sender.eulerStep(senderstate,time_const)
@@ -41,11 +53,7 @@ def runtrial(c, goal):
        
 
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: py ./meandistance.py genome_name.pkl")
-        exit()
-
-    with open(sys.argv[1], 'rb') as f:
+    with open(sys.argv[2], 'rb') as f:
         c = pickle.load(f)
 
     with Pool(processes=cpu_count()) as pool:
@@ -58,7 +66,7 @@ def main():
     plt.scatter(goal,meandist)
     plt.xlabel("Goal Location")
     plt.ylabel("Mean Absolute Distance")
-    plt.title(sys.argv[1])
+    plt.title(sys.argv[2])
     plt.show()
 
 if __name__ == '__main__':
