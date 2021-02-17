@@ -26,6 +26,7 @@ population_size = settings.get("population_size",96)
 simulation_seconds = settings.get("simulation_seconds",3)
 
 evolve.mutationRate = settings.get("mutationRate",0.447)
+evolve.centerCrossing = settings.get("centerCrossing", False)
 line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
 
 
@@ -93,7 +94,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
 
 def main():
-    print(f"Configuration is \n\tElitism : {elitism}\n\tNumber of generations : {generations}\n\tNumber of trials : {ntrials}\n\tPopulation size : {population_size}\n\tSimulation length {simulation_seconds} seconds\n\tMutation Rate : {evolve.mutationRate}\n\tMotor function : {settings.get('motor','clippedMotor1')}")
+    print(f"Configuration is \n\tElitism : {elitism}\n\tNumber of generations : {generations}\n\tNumber of trials : {ntrials}\n\tPopulation size : {population_size}\n\tSimulation length {simulation_seconds} seconds\n\tMutation Rate : {evolve.mutationRate}\n\tCenter Crossing : {evolve.centerCrossing}\n\tMotor function : {settings.get('motor','clippedMotor1')}")
 
     start = time.time()
     path = f"logs/{int(start)}.txt"
