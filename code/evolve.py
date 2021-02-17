@@ -2,10 +2,11 @@ import ctrnn
 import statistics
 import random
 
+mutationRate = 0.447
 class Citizen():
     def __init__(self,genome=None,fitness=None):
         if genome == None:
-            genome = ctrnn.Genome(centerCrossing=True)
+            genome = ctrnn.Genome()
         self.genome = genome
         self.fitness = fitness
 
@@ -57,7 +58,6 @@ def mutate(pop, pool, tasks,fitness):
         pop, with a mutation applied to each member
 
     """
-    
     pop = [(x,tasks,fitness) for x in pop]
     pop = pool.starmap(mutate_item,pop)
             

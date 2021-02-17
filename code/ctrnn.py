@@ -144,9 +144,7 @@ class Genome():
         self.rTaus = np.reciprocal(self.taus)
 
 
-    # Apply a gaussian mutation of 0.2 to every parameter
-    # Potentially this could be multiplicative
-    # Per parameter mutation scaling 
+    # Recreate the beer version
     def mutate(self, stddev):
         """
         A method to mutate a genome by adding gaussian noise. 
@@ -162,12 +160,29 @@ class Genome():
         self.taus          += np.random.normal(0,stddev,self.taus.shape)
 
         
-        self.inputWeights   = np.clip(self.inputWeights,-16,16)
-        self.outputWeights  = np.clip(self.outputWeights,-16,16)
-        self.weights        = np.clip(self.weights,-16,16)
-        self.biases         = np.clip(self.biases,-16,16)
-        self.gains          = np.clip(self.gains,-10,10)
+        # self.inputWeights   = np.clip(self.inputWeights,-16,16)
+        # self.outputWeights  = np.clip(self.outputWeights,-16,16)
+        # self.weights        = np.clip(self.weights,-16,16)
+        # self.biases         = np.clip(self.biases,-16,16)
+        # self.gains          = np.clip(self.gains,-10,10)
         self.taus           = np.clip(self.taus,1,100)
+
+    def beerMutate(self, stddev):
+        """
+        Perform mutation as described by Randall Beer
+        """
+        magnitude = np.random.normal(0,stddev)
+        mutationvector = np.random.normal(0,1,self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(3*self.hiddenCount))
+        mutationvector /= np.sqrt((mutationvector**2).sum(-1))
+        mutationvector *= magnitude
+
+        self.inputWeights  += mutationvector[:self.inputsCount]
+        self.outputWeights += mutationvector[self.inputsCount:self.inputsCount+self.outputsCount]
+        self.weights       += mutationvector[self.inputsCount+self.outputsCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
+        self.biases        += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
+        self.gains         += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount)]
+        self.taus          += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount):]
+
 
     def copy(self):
         """

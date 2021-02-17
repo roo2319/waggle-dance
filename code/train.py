@@ -1,22 +1,38 @@
-from os import supports_effective_ids
+import json
 import pickle
 import random
 import statistics
+import sys
 import time
 from multiprocessing import Pool, Value, cpu_count
 from multiprocessing.context import ProcessError
+from os import supports_effective_ids
 
 import ctrnn
 import evolve
 import line_location
 
+if len(sys.argv) < 2:
+    print("Usage: train.py config.json")
+    exit()
 
-simulation_seconds = 3
-elitism = 0
-ntrials = 20
+with open(sys.argv[1],'r') as config:
+    settings = json.load(config)
+
+elitism = settings.get("elitism",0)
+generations = settings.get("generations", 1000)
+ntrials = settings.get("ntrials",20)
+population_size = settings.get("population_size",96)
+simulation_seconds = settings.get("simulation_seconds",3)
+
+evolve.mutationRate = settings.get("mutationRate",0.447)
+line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
+
+
 aggregate_fitness = evolve.rank_reduce
 maxfitness = aggregate_fitness([1]*ntrials)
 time_const = line_location.line_location.timestep
+
 
 def fitness(genome,tasks):
     sender = ctrnn.CTRNN(genome)
@@ -74,12 +90,16 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
     return best
 
+
+
 def main():
+    print(f"Configuration is \n\tElitism : {elitism}\n\tNumber of generations : {generations}\n\tNumber of trials : {ntrials}\n\tPopulation size : {population_size}\n\tSimulation length {simulation_seconds} seconds\n\tMutation Rate : {evolve.mutationRate}\n\tMotor function : {settings.get('motor','clippedMotor1')}")
+
     start = time.time()
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
         print(f"Logs are in {path}")
-        best = train(96,1000,file=f)
+        best = train(population_size,generations,file=f)
         print(f"Best fitness: {best.fitness}")
         with open("models/best_genome.pkl",'wb') as g:
             pickle.dump(best.genome,g)

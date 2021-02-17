@@ -8,3 +8,7 @@ checkpoint.pkl
 profile
 result.html
 weird_tests.py
+code/__pycache__/train.cpython-37.pyc
+code/__pycache__/line_location.cpython-37.pyc
+code/__pycache__/evolve.cpython-37.pyc
+code/__pycache__/ctrnn.cpython-37.pyc

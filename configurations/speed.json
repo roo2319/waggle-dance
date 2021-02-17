@@ -1,0 +1,1 @@
+{"simulation_seconds": 3, "elitism": 5, "ntrials": 5, "aggregate_fitness": "rank_reduce", "mutationRate":0.6, "population_size": 200, "generations": 100, "motor" : "tanhMotor"}

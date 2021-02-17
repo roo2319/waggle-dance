@@ -18,6 +18,40 @@ def quickClip(minV,maxV,value):
     """
     return max(minV,min(maxV,value))
 
+def discreteMotor(val):
+    """
+    A motor function that assign -0.01, 0 or 0.01 based on a threshold
+
+    Parameters: 
+        val : The value to be transformed
+
+    Return:
+        -0.01, 0 or 0.01
+    """
+    if val < 0.25:
+        return -0.01
+    elif val > 0.75: 
+        return 0.01
+    else:
+        return 0
+
+def clippedMotor1(val):
+    return quickClip(-0.01,0.01,(val-0.5)/50)
+
+def clippedMotor2(val):
+    return quickClip(-0.01,0.01,(val-1)/50)
+
+def clippedMotor3(val):
+    return quickClip(-0.005,0.005,(val-0.5)/50)
+
+def sigmoidMotor(val):
+    return (expit(val)-0.5)/50 
+
+def tanhMotor(val):
+    return (tanh(val)-0.5)/50
+
+motors = {"discreteMotor":discreteMotor, "clippedMotor1" : clippedMotor1, "clippedMotor2" : clippedMotor2, "clippedMotor3" : clippedMotor3, "sigmoidMotor" : sigmoidMotor, "tanhMotor" : tanhMotor}
+motorFunction = clippedMotor1
 class line_location():
     """
     The class representing the 1D agent game. The task has two agents, a sender and 
@@ -74,7 +108,7 @@ class line_location():
         """
         pos = self.senderPos if isSender else self.receiverPos
         # dx = self.tanhMotor(output)
-        dx = self.clippedMotor1(output)
+        dx = motorFunction(output)
         pos += dx
         
         if isSender:
@@ -140,52 +174,20 @@ class line_location():
         # return max(1 - abs(self.senderPos-self.goal),0)
 
     # Threshold function
-
-
-    def discreteMotor(self,val):
-        """
-        A motor function that assign -0.01, 0 or 0.01 based on a threshold
-
-        Parameters: 
-            val : The value to be transformed
-
-        Return:
-            -0.01, 0 or 0.01
-        """
-        if val < 0.25:
-            return -0.01
-        elif val > 0.75: 
-            return 0.01
-        else:
-            return 0
-
-    def clippedMotor1(self,val):
-        return quickClip(-0.01,0.01,(val-0.5)/50)
-
-    def clippedMotor2(self,val):
-        return quickClip(-0.01,0.01,(val-1)/50)
-
-    def sigmoidMotor(self,val):
-        return (expit(val)-0.5)/50 
-
-    def tanhMotor(self,val):
-        return (tanh(val)-0.5)/50
-
-
-    def velocityMotor(self,isSender,val):
-        val = expit(val) - 0.5
-        if val <= 0.25:
-            delta = -0.001
-        elif val > 0.25: 
-            delta = 0.001
-        # else:
-        #     delta = 0
-        if isSender:
-            self.senderVelocity = quickClip(-0.01,0.01,self.senderVelocity+delta)
-            return self.senderVelocity
-        else:
-            self.receiverVelocity = quickClip(-0.01,0.01,self.receiverVelocity+delta)
-            return self.receiverVelocity
+    # def velocityMotor(self,isSender,val):
+    #     val = expit(val) - 0.5
+    #     if val <= 0.25:
+    #         delta = -0.001
+    #     elif val > 0.25: 
+    #         delta = 0.001
+    #     # else:
+    #     #     delta = 0
+    #     if isSender:
+    #         self.senderVelocity = quickClip(-0.01,0.01,self.senderVelocity+delta)
+    #         return self.senderVelocity
+    #     else:
+    #         self.receiverVelocity = quickClip(-0.01,0.01,self.receiverVelocity+delta)
+    #         return self.receiverVelocity
              
 
 

@@ -1,0 +1,1 @@
+{"simulation_seconds": 3, "elitism": 0, "ntrials": 20, "aggregate_fitness": "rank_reduce", "mutationRate":0.447, "population_size": 96, "generations": 1000, "motor" : "clippedMotor1"}
