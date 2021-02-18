@@ -42,7 +42,7 @@ def clippedMotor2(val):
     return quickClip(-0.01,0.01,(val-1)/50)
 
 def clippedMotor3(val):
-    return quickClip(-0.005,0.005,(val-0.5)/50)
+    return quickClip(-0.01,0.01,val)
 
 def sigmoidMotor(val):
     return (expit(val)-0.5)/50 
