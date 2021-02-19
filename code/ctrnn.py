@@ -166,6 +166,7 @@ class Genome():
         # self.biases         = np.clip(self.biases,-16,16)
         # self.gains          = np.clip(self.gains,-10,10)
         self.taus           = np.clip(self.taus,1,100)
+        self.rTaus          = np.reciprocal(self.taus)
 
     def beerMutate(self, stddev):
         """
@@ -191,9 +192,9 @@ class Genome():
         Return:
             A genome object that is identical to the caller
         """
-        return Genome(self.inputsCount, self.hiddenCount, self.outputsCount, np.copy(self.inputWeights),
-                      np.copy(self.outputWeights), np.copy(self.weights), np.copy(self.biases),
-                      np.copy(self.gains), np.copy(self.taus))
+        return Genome(inputsCount=self.inputsCount, hiddenCount=self.hiddenCount, outputsCount=self.outputsCount, iWeights=np.copy(self.inputWeights),
+                      oWeights=np.copy(self.outputWeights), weights=np.copy(self.weights), biases=np.copy(self.biases),
+                      gains=np.copy(self.gains), taus=np.copy(self.taus))
     
     def __str__(self):
         """
