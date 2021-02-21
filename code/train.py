@@ -3,6 +3,7 @@ import pickle
 import random
 import statistics
 import sys
+import numpy as np
 import time
 from multiprocessing import Pool, Value, cpu_count
 from multiprocessing.context import ProcessError
@@ -23,6 +24,7 @@ elitism = settings.get("elitism",0)
 generations = settings.get("generations", 1000)
 ntrials = settings.get("ntrials",20)
 population_size = settings.get("population_size",96)
+initial_population_size = settings.get("initial_size", 96)
 simulation_seconds = settings.get("simulation_seconds",3)
 
 evolve.mutationRate = settings.get("mutationRate",0.447)
@@ -61,15 +63,13 @@ def fitness(genome,tasks):
     return aggregate_fitness(fitnesses)/maxfitness
 
 
-def train(pop_size=100, max_gen=1, write_every=1, file=None):
+def train(initial_pop_size = 1000, pop_size=100, max_gen=1, write_every=1, file=None):
 
     with Pool(processes=cpu_count()) as pool:
         tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
-
         batch_start = time.time()
-        pop = evolve.initialise(pop_size)
-        pop = evolve.assess(pop, pool, tasks, fitness)
+        pop = evolve.initialise(initial_pop_size, pop_size, pool,tasks,fitness)
         generation = 0
         while generation < max_gen:
             if file != None and generation % 20 == 0:
@@ -94,13 +94,13 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
 
 def main():
-    print(f"Configuration is \n\tElitism : {elitism}\n\tNumber of generations : {generations}\n\tNumber of trials : {ntrials}\n\tPopulation size : {population_size}\n\tSimulation length {simulation_seconds} seconds\n\tMutation Rate : {evolve.mutationRate}\n\tCenter Crossing : {evolve.centerCrossing}\n\tMotor function : {settings.get('motor','clippedMotor1')}")
+    print(f"Configuration is \n\tElitism : {elitism}\n\tNumber of generations : {generations}\n\tNumber of trials : {ntrials}\n\tInitial Population size : {initial_population_size}\n\tPopulation size : {population_size}\n\tSimulation length {simulation_seconds} seconds\n\tMutation Rate : {evolve.mutationRate}\n\tCenter Crossing : {evolve.centerCrossing}\n\tMotor function : {settings.get('motor','clippedMotor1')}")
 
     start = time.time()
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
         print(f"Logs are in {path}")
-        best = train(population_size,generations,file=f)
+        best = train(initial_population_size, population_size,generations,file=f)
         print(f"Best fitness: {best.fitness}")
         with open("models/best_genome.pkl",'wb') as g:
             pickle.dump(best.genome,g)

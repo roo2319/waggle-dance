@@ -101,30 +101,39 @@ def rank_reduce(fitnesses):
 def min_fitness(fitnesses):
     return min(fitnesses)
 
-def initialise(pop_size):
+def initialise(initial_pop_size, pop_size, pool, tasks, fitness):
     """
     Initialise a population of random genomes
 
     Parameters:
-        pop_size (int) : The number of members of the population
-
+        pop_size (int) : The number of members of the seed population
+        pop_size (int) : The number of members population members to be returned
+        pool (multiprocessing.pool.Pool) : A multiprocessing pool
+        tasks (list) : A list of tasks used to assess the population
+        fitness (func) : A function with type Genome, Task -> Float
+        
     Return:
         A list containing pop_size members
     """
 
     pop = []
-    while len(pop)<pop_size:
+    while len(pop)<initial_pop_size:
         pop.append(Citizen())
+
+    pop = assess(pop,pool,tasks,fitness)
+    pop = [x for x in pop if x.fitness != 0]
+    print(f"{len(pop)} non-zero members from a seed population of {initial_pop_size}")
+    pop = selection(pop,size=pop_size)
 
     return pop
 
-def selection(pop,elitism=0):
+def selection(pop,elitism=0,size=None):
     elites = pop[:elitism]
-    sel = rank_roulette_select(pop[elitism:])
+    sel = rank_roulette_select(pop[elitism:],size)
     return sorted(elites+sel, key = lambda i: i.fitness, reverse=True) 
 
 
-def rank_roulette_select(pop):
+def rank_roulette_select(pop,size=None):
     """
     Perform roulette selection, weighted by rank rather than fitness
 
@@ -134,7 +143,9 @@ def rank_roulette_select(pop):
     Return:
         A new population chosen by rank based roulette selection
     """
-    pop = random.choices(pop,reversed(range(1,len(pop)+1)),k=len(pop))
+    if size == None:
+        size = len(pop)
+    pop = random.choices(pop,reversed(range(1,len(pop)+1)),k=size)
     return pop
 
 
