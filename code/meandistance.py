@@ -13,6 +13,15 @@ import line_location
 
 simulation_seconds = 3
 
+if len(sys.argv) < 3:
+    print("Usage: py ./meandistance.py config.json genome_name.pkl")
+    exit()
+
+with open(sys.argv[1],'r') as config:
+    settings = json.load(config)
+simulation_seconds = settings.get("simulation_seconds",3)
+line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
+
 def runtrial(c, goal):
     dist = 0
     count = 0 
@@ -46,15 +55,6 @@ def runtrial(c, goal):
 
 def main():
 
-    if len(sys.argv) < 3:
-        print("Usage: py ./meandistance.py config.json genome_name.pkl")
-        exit()
-
-    with open(sys.argv[1],'r') as config:
-        settings = json.load(config)
-    global simulation_seconds
-    simulation_seconds = settings.get("simulation_seconds",3)
-    line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
 
     with open(sys.argv[2], 'rb') as f:
         c = pickle.load(f)
