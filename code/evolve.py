@@ -78,9 +78,9 @@ def mutate_item(item,tasks,fitness):
     """
 
     child = item.genome.copy()
-    child.mutate(0.447)
+    child.mutate(mutationRate)
     cfitness = fitness(child,tasks)
-    if cfitness > item.fitness:
+    if cfitness >= item.fitness:
         return Citizen(child,cfitness)
     return item
 
