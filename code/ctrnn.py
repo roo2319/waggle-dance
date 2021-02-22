@@ -104,42 +104,42 @@ class Genome():
 
         # Each input/output is connected to exactly one hidden node
         if iWeights is None:
-            iWeights = np.random.normal(scale=2,size=(inputsCount))
-            # iWeights = np.random.uniform(-16,16,size=(inputsCount))
+            # iWeights = np.random.normal(scale=2,size=(inputsCount))
+            iWeights = np.random.uniform(-16,16,size=(inputsCount))
             # iWeights = np.zeros(inputsCount)
         self.inputWeights = iWeights
         
         if oWeights is None:
-            oWeights = np.random.normal(scale=2,size=(outputsCount))
-            # oWeights = np.random.uniform(-16,16,size=(outputsCount))
+            # oWeights = np.random.normal(scale=2,size=(outputsCount))
+            oWeights = np.random.uniform(-16,16,size=(outputsCount))
             # oWeights = np.zeros(outputsCount)
         self.outputWeights = oWeights
 
         if weights is None:
-            weights = np.random.normal(scale=2,size=(hiddenCount,hiddenCount))
-            # weights = np.random.uniform(-16,16,size=(hiddenCount,hiddenCount))
+            # weights = np.random.normal(scale=2,size=(hiddenCount,hiddenCount))
+            weights = np.random.uniform(-16,16,size=(hiddenCount,hiddenCount))
 
         self.weights = weights
 
         if centerCrossing == True:
             biases = -0.5 * sum(weights)
         elif biases is None: 
-            biases = np.random.normal(scale=2,size=(hiddenCount)) 
-            # biases = np.random.uniform(-16,16,size=(hiddenCount))
+            # biases = np.random.normal(scale=2,size=(hiddenCount)) 
+            biases = np.random.uniform(-16,16,size=(hiddenCount))
             # biases = np.ones(hiddenCount)
 
         self.biases = biases
 
         if gains is None:
-            gains = np.random.normal(scale=2,size=(hiddenCount))
+            # gains = np.random.normal(scale=2,size=(hiddenCount))
             # gains = np.random.uniform(-25,25,size=(hiddenCount))
-            # gains = np.ones((hiddenCount))
+            gains = np.ones((hiddenCount))
 
         self.gains = gains
 
         if taus is None:
-            taus = np.ones((hiddenCount))
-            # taus = np.random.uniform(50,100,(hiddenCount))
+            # taus = np.ones((hiddenCount))
+            taus = np.random.uniform(0.01,30,(hiddenCount))
         self.taus = taus
         self.rTaus = np.reciprocal(self.taus)
 
@@ -156,16 +156,16 @@ class Genome():
         self.outputWeights += np.random.normal(0,stddev,self.outputWeights.shape)
         self.weights       += np.random.normal(0,stddev,self.weights.shape)
         self.biases        += np.random.normal(0,stddev,self.biases.shape)
-        self.gains         += np.random.normal(0,stddev,self.gains.shape)
+        # self.gains         += np.random.normal(0,stddev,self.gains.shape)
         self.taus          += np.random.normal(0,stddev,self.taus.shape)
 
         
-        # self.inputWeights   = np.clip(self.inputWeights,-16,16)
-        # self.outputWeights  = np.clip(self.outputWeights,-16,16)
-        # self.weights        = np.clip(self.weights,-16,16)
-        # self.biases         = np.clip(self.biases,-16,16)
+        self.inputWeights   = np.clip(self.inputWeights,-16,16)
+        self.outputWeights  = np.clip(self.outputWeights,-16,16)
+        self.weights        = np.clip(self.weights,-16,16)
+        self.biases         = np.clip(self.biases,-16,16)
         # self.gains          = np.clip(self.gains,-10,10)
-        self.taus           = np.clip(self.taus,1,100)
+        self.taus           = np.clip(self.taus,0.01,30)
         self.rTaus          = np.reciprocal(self.taus)
 
     def beerMutate(self, stddev):
@@ -173,7 +173,7 @@ class Genome():
         Perform mutation as described by Randall Beer
         """
         magnitude = np.random.normal(0,stddev)
-        mutationvector = np.random.normal(0,1,self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(3*self.hiddenCount))
+        mutationvector = np.random.normal(0,1,self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount))
         mutationvector /= np.sqrt((mutationvector**2).sum(-1))
         mutationvector *= magnitude
 
@@ -181,8 +181,8 @@ class Genome():
         self.outputWeights += mutationvector[self.inputsCount:self.inputsCount+self.outputsCount]
         self.weights       += mutationvector[self.inputsCount+self.outputsCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
         self.biases        += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
-        self.gains         += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount)]
-        self.taus          += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount):]
+        # self.gains         += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount)]
+        self.taus          += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):]
 
 
     def copy(self):
