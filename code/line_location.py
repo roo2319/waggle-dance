@@ -51,7 +51,7 @@ def tanhMotor(val):
     return (tanh(val)-0.5)/50
 
 def camposMotor(val):
-    return (2 * (val - 1)) * line_location.timestep * 0.1
+    return (2 * (val - 0.5))  * 0.01
 
 motors = {"discreteMotor":discreteMotor, "clippedMotor1" : clippedMotor1, "clippedMotor2" : clippedMotor2, "clippedMotor3" : clippedMotor3, "sigmoidMotor" : sigmoidMotor, "tanhMotor" : tanhMotor, "camposMotor":camposMotor}
 motorFunction = clippedMotor1
