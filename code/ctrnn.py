@@ -139,7 +139,7 @@ class Genome():
 
         if taus is None:
             # taus = np.ones((hiddenCount))
-            taus = np.random.uniform(0.01,30,(hiddenCount))
+            taus = np.random.uniform(50,100,(hiddenCount))
         self.taus = taus
         self.rTaus = np.reciprocal(self.taus)
 
@@ -165,7 +165,7 @@ class Genome():
         self.weights        = np.clip(self.weights,-16,16)
         self.biases         = np.clip(self.biases,-16,16)
         # self.gains          = np.clip(self.gains,-10,10)
-        self.taus           = np.clip(self.taus,0.01,30)
+        self.taus           = np.clip(self.taus,50,100)
         self.rTaus          = np.reciprocal(self.taus)
 
     def beerMutate(self, stddev):

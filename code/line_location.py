@@ -42,7 +42,7 @@ def clippedMotor2(val):
     return quickClip(-0.01,0.01,(val-1)/50)
 
 def clippedMotor3(val):
-    return quickClip(-0.01,0.01,val-0.5)
+    return quickClip(-0.01,0.01,val-0.59)
 
 def sigmoidMotor(val):
     return (expit(val)-0.5)/50 
@@ -50,7 +50,10 @@ def sigmoidMotor(val):
 def tanhMotor(val):
     return (tanh(val)-0.5)/50
 
-motors = {"discreteMotor":discreteMotor, "clippedMotor1" : clippedMotor1, "clippedMotor2" : clippedMotor2, "clippedMotor3" : clippedMotor3, "sigmoidMotor" : sigmoidMotor, "tanhMotor" : tanhMotor}
+def camposMotor(val):
+    return (2 * (val - 1)) * line_location.timestep * 0.1
+
+motors = {"discreteMotor":discreteMotor, "clippedMotor1" : clippedMotor1, "clippedMotor2" : clippedMotor2, "clippedMotor3" : clippedMotor3, "sigmoidMotor" : sigmoidMotor, "tanhMotor" : tanhMotor, "camposMotor":camposMotor}
 motorFunction = clippedMotor1
 class line_location():
     """
