@@ -83,7 +83,7 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
 
     ax[0][i].plot(displacement[0],displacement[1],label="receiver")
     ax[0][i].plot(displacement[0],displacement[2],label="sender")
-    ax[0][i].plot(displacement[0],[goal]*300,label="goal")
+    ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),label="goal")
     ax[0][i].set_title(f"Goal = {goal}\nReceiver = {sim.receiverPos:.2f}\nFitness = {sim.fitness():.2f}")
     ax[0][i].legend()
     ax[1][i].plot(displacement[0],rsens[0],label="Contact")
