@@ -66,7 +66,7 @@ class line_location():
         receiverPos (float) : The starting location of the receiver
         goal (float) : The location of the endpoint. 
     """
-    timestep = 0.01
+    timestep = 1
 
     def __init__(self,senderPos=None,receiverPos=None,goal=None):
         if goal == None:
@@ -175,23 +175,6 @@ class line_location():
         return max(1 - abs(self.receiverPos-self.goal),0)
         # Sender Goal
         # return max(1 - abs(self.senderPos-self.goal),0)
-
-    # Threshold function
-    # def velocityMotor(self,isSender,val):
-    #     val = expit(val) - 0.5
-    #     if val <= 0.25:
-    #         delta = -0.001
-    #     elif val > 0.25: 
-    #         delta = 0.001
-    #     # else:
-    #     #     delta = 0
-    #     if isSender:
-    #         self.senderVelocity = quickClip(-0.01,0.01,self.senderVelocity+delta)
-    #         return self.senderVelocity
-    #     else:
-    #         self.receiverVelocity = quickClip(-0.01,0.01,self.receiverVelocity+delta)
-    #         return self.receiverVelocity
-             
 
 
 # Testing, 1 second movement

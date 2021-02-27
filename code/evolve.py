@@ -159,7 +159,7 @@ def sus(pop,size=None):
 
     # Rerank using bakers linear ranking method
     for count, i in enumerate(pop):
-        i.rfitness = (MaxExpOffspring + (2.0 - 2.0*MaxExpOffspring)*((count)/(len(pop)-1)))/(len(pop))
+        i.rfitness = (MaxExpOffspring + (2.0 - 2.0*MaxExpOffspring)*((count)/(len(pop)-1)))/(size)
 
     rand = random.random() 
     sum = 0
