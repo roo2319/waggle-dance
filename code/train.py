@@ -83,7 +83,7 @@ def train(initial_pop_size = 1000, pop_size=100, max_gen=1, write_every=1, file=
             tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
 
             pop = evolve.assess(pop, pool, tasks, fitness)
-            pop = evolve.selection(pop,elitism)
+            pop = evolve.sus(pop)
             pop = evolve.mutate(pop, pool, tasks, fitness)
             if write_every and generation % write_every==0:
                 evolve.log_fitness(pop, generation, file)
