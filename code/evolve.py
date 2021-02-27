@@ -10,6 +10,8 @@ class Citizen():
             genome = ctrnn.Genome(centerCrossing=centerCrossing)
         self.genome = genome
         self.fitness = fitness
+        # Fitness for the purpose of sus
+        self.rfitness = None
 
 def assess(pop, pool, tasks, fitness):
     """
@@ -61,7 +63,8 @@ def mutate(pop, pool, tasks,fitness):
     """
     pop = [(x,tasks,fitness) for x in pop]
     pop = pool.starmap(mutate_item,pop)
-            
+    # print(f"{sum(x[1] for x in pop)} successful mutations")
+    # pop = [x[0] for x in pop]
     return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
 def mutate_item(item,tasks,fitness):
@@ -78,7 +81,7 @@ def mutate_item(item,tasks,fitness):
     """
 
     child = item.genome.copy()
-    child.mutate(mutationRate)
+    child.beerMutate(mutationRate)
     cfitness = fitness(child,tasks)
     if cfitness >= item.fitness:
         return Citizen(child,cfitness)
@@ -148,6 +151,29 @@ def rank_roulette_select(pop,size=None):
     pop = random.choices(pop,reversed(range(1,len(pop)+1)),k=size)
     return pop
 
+def sus(pop,size=None):
+    # Bakers stochastic universal sampling
+    MaxExpOffspring = 3
+    if size == None:
+        size = len(pop)
+
+    # Rerank using bakers linear ranking method
+    for count, i in enumerate(pop):
+        i.rfitness = (MaxExpOffspring + (2.0 - 2.0*MaxExpOffspring)*((count)/(len(pop)-1)))/(len(pop))
+
+    rand = random.random() 
+    sum = 0
+    i = -1
+    newpop = []
+    while len(newpop) < size:
+        if rand < sum:
+            newpop.append(pop[i])
+            continue
+        i += 1
+        sum += size * pop[i].rfitness
+    return newpop
+
+    
 
 def truncation_select(pop):
     """
