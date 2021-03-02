@@ -210,7 +210,6 @@ def log_fitness(pop, gen, file=None):
     fitness = []
     for p in pop:
         fitness.append(p.fitness)
-    print(fitness)
     line = "{:4d}: max:{:.3f}, min:{:.3f}, mean:{:.3f}".format(gen,max(fitness),min(fitness),statistics.mean(fitness))
 
     if file:
