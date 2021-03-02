@@ -42,9 +42,9 @@ def fitness(genome,tasks):
     receiver = ctrnn.CTRNN(genome)
     fitnesses = []
 
-    for sp,rp,goal in tasks:
+    # for sp,rp,goal in tasks:
+    for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), random.uniform(0.5,1)) for _ in tasks]:
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
-
 
         # Run the given simulation for up to num_steps time steps.
         fitness = 0.0
@@ -72,19 +72,19 @@ def train(initial_pop_size = 1000, pop_size=100, max_gen=1, write_every=1, file=
         pop = evolve.initialise(initial_pop_size, pop_size, pool,tasks,fitness)
         generation = 0
         while generation < max_gen:
+
+            generation += 1
+            tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
+
+            pop = evolve.sus(pop)
+            pop = evolve.mutate(pop, pool, tasks, fitness)
+            pop = evolve.assess(pop, pool, tasks, fitness)
             if file != None and generation % 20 == 0:
                 evolve.log_fitness(pop, generation, None)
                 print(f"Batch Time {time.time()-batch_start}")
                 batch_start = time.time()
                 with open("models/checkpoint.pkl",'wb') as g:
                     pickle.dump(pop[0].genome,g)
-
-            generation += 1
-            tasks = [(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0)) for _ in range(ntrials)]
-
-            pop = evolve.assess(pop, pool, tasks, fitness)
-            pop = evolve.sus(pop)
-            pop = evolve.mutate(pop, pool, tasks, fitness)
             if write_every and generation % write_every==0:
                 evolve.log_fitness(pop, generation, file)
         best = pop[0]
