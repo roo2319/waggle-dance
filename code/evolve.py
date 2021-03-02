@@ -167,7 +167,9 @@ def sus(pop,size=None):
     newpop = []
     while len(newpop) < size:
         if rand < sum:
-            newpop.append(pop[i])
+            # if you don't create a new citizen bad things happen
+            newpop.append(Citizen(pop[i].genome,pop[i].fitness))
+            rand += 1
             continue
         i += 1
         sum += size * pop[i].rfitness
@@ -208,7 +210,7 @@ def log_fitness(pop, gen, file=None):
     fitness = []
     for p in pop:
         fitness.append(p.fitness)
-
+    print(fitness)
     line = "{:4d}: max:{:.3f}, min:{:.3f}, mean:{:.3f}".format(gen,max(fitness),min(fitness),statistics.mean(fitness))
 
     if file:
