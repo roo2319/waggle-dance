@@ -140,7 +140,7 @@ class Genome():
 
         if taus is None:
             # taus = np.ones((hiddenCount))
-            taus = np.random.uniform(30,100,(hiddenCount))
+            taus = np.random.uniform(50,100,(hiddenCount))
         self.taus = taus
         self.rTaus = np.reciprocal(self.taus)
 
@@ -166,7 +166,7 @@ class Genome():
         self.weights        = np.clip(self.weights,-16,16)
         self.biases         = np.clip(self.biases,-16,16)
         # self.gains          = np.clip(self.gains,-10,10)
-        self.taus           = np.clip(self.taus,30,100)
+        self.taus           = np.clip(self.taus,50,100)
         self.rTaus          = np.reciprocal(self.taus)
 
     def beerMutate(self, stddev):
@@ -178,19 +178,19 @@ class Genome():
         mutationvector /= np.sqrt((mutationvector**2).sum(-1))
         mutationvector *= magnitude
 
-        self.inputWeights  += 32 * mutationvector[:self.inputsCount]
-        self.outputWeights += 32 * mutationvector[self.inputsCount:self.inputsCount+self.outputsCount]
-        self.weights       += 32 * mutationvector[self.inputsCount+self.outputsCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
-        self.biases        += 32 * mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
+        self.inputWeights  += 16 * mutationvector[:self.inputsCount]
+        self.outputWeights += 16 * mutationvector[self.inputsCount:self.inputsCount+self.outputsCount]
+        self.weights       += 16 * mutationvector[self.inputsCount+self.outputsCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
+        self.biases        += 16 * mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
         # self.gains         += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount)]
-        self.taus          += 70 * mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):]
+        self.taus          += 25 * mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):]
 
         self.inputWeights   = np.clip(self.inputWeights,-16,16)
         self.outputWeights  = np.clip(self.outputWeights,-16,16)
         self.weights        = np.clip(self.weights,-16,16)
         self.biases         = np.clip(self.biases,-16,16)
         # self.gains          = np.clip(self.gains,-10,10)
-        self.taus           = np.clip(self.taus,30,100)
+        self.taus           = np.clip(self.taus,50,100)
         self.rTaus          = np.reciprocal(self.taus)
 
 
