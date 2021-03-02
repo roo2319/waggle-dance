@@ -13,7 +13,7 @@ class Citizen():
         # Fitness for the purpose of sus
         self.rfitness = None
 
-def assess(pop, pool, fitness):
+def assess(pop, pool, fitness,rs):
     """
     Calculate fitness score for each member across the given population
 
@@ -26,11 +26,11 @@ def assess(pop, pool, fitness):
         The population, sorted by their newly assessed fitness scores 
     """
 
-    pop = [(x,fitness) for x in pop]
+    pop = [(x,fitness,rs) for x in pop]
     pop = pool.starmap(assess_item, pop)
     return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
-def assess_item(item,fitness):
+def assess_item(item,fitness,rs):
     """
     Calculate the fitness of a single genome
 
@@ -42,10 +42,10 @@ def assess_item(item,fitness):
         item, with an updated fitness value
 
     """
-    item.fitness = fitness(item.genome)
+    item.fitness = fitness(item.genome,rs)
     return item
 
-def mutate(pop, pool,fitness):
+def mutate(pop, pool,fitness,rs):
     """
     Mutate each member of the population
 
@@ -58,13 +58,13 @@ def mutate(pop, pool,fitness):
         pop, with a mutation applied to each member
 
     """
-    pop = [(x,fitness) for x in pop]
+    pop = [(x,fitness,rs) for x in pop]
     pop = pool.starmap(mutate_item,pop)
     # print(f"{sum(x[1] for x in pop)} successful mutations")
     # pop = [x[0] for x in pop]
     return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
-def mutate_item(item,fitness):
+def mutate_item(item,fitness,rs):
     """
     Mutate a single genome, only keep the result if it's better than the parent
 
@@ -78,7 +78,7 @@ def mutate_item(item,fitness):
 
     child = item.genome.copy()
     child.beerMutate(mutationRate)
-    cfitness = fitness(child)
+    cfitness = fitness(child,rs)
     if cfitness >= item.fitness:
         return Citizen(child,cfitness)
     return item
@@ -100,7 +100,7 @@ def rank_reduce(fitnesses):
 def min_fitness(fitnesses):
     return min(fitnesses)
 
-def initialise(pop_size, pool, fitness):
+def initialise(pop_size):
     """
     Initialise a population of random genomes
 
@@ -143,7 +143,7 @@ def rank_roulette_select(pop,size=None):
 
 def sus(pop,size=None):
     # Bakers stochastic universal sampling
-    MaxExpOffspring = 2.5
+    MaxExpOffspring = 2
     if size == None:
         size = len(pop)
     # Rerank using bakers linear ranking method

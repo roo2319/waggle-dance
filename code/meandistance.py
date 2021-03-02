@@ -60,6 +60,8 @@ def main():
     with open(sys.argv[2], 'rb') as f:
         c = pickle.load(f)
 
+    print(c)
+
     with Pool(processes=cpu_count()) as pool:
         tasks = [(c,goal) for goal in np.arange(0.5,1,0.01)]
         results = pool.starmap(runtrial,tasks)

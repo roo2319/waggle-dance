@@ -36,11 +36,12 @@ maxfitness = aggregate_fitness([1]*ntrials)
 time_const = line_location.line_location.timestep
 
 
-def fitness(genome):
+def fitness(genome,rs):
     sender = ctrnn.CTRNN(genome)
     receiver = ctrnn.CTRNN(genome)
     fitnesses = []
 
+    random.seed(rs)
     for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), random.uniform(0.5,1)) for _ in range(ntrials)]:
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
 
@@ -64,11 +65,13 @@ def fitness(genome):
 def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
     with Pool(processes=cpu_count()) as pool:
+        rs = random.random()
         batch_start = time.time()
-        pop = evolve.initialise(pop_size, pool,fitness)
+        pop = evolve.initialise(pop_size)
         generation = 0
         while generation < max_gen:
-            pop = evolve.assess(pop, pool, fitness)
+            rs = random.random()
+            pop = evolve.assess(pop, pool, fitness,rs)
 
             if file != None and generation % 20 == 0:
                 evolve.log_fitness(pop, generation, None)
@@ -81,7 +84,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             generation += 1
 
             pop = evolve.sus(pop)
-            pop = evolve.mutate(pop, pool, fitness)
+            pop = evolve.mutate(pop, pool, fitness,rs)
         
         
         best = pop[0]
