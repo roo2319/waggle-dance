@@ -13,67 +13,63 @@ class Citizen():
         # Fitness for the purpose of sus
         self.rfitness = None
 
-def assess(pop, pool, tasks, fitness):
+def assess(pop, pool, fitness):
     """
     Calculate fitness score for each member across the given population
 
     Parameters:
         pop (list) : A list of members of the population
         pool (multiprocessing.pool.Pool) : A multiprocessing pool
-        tasks (list) : A list of tasks used to assess the population
         fitness (func) : A function with type Genome, Task -> Float
 
     Return:
         The population, sorted by their newly assessed fitness scores 
     """
 
-    pop = [(x,tasks,fitness) for x in pop]
+    pop = [(x,fitness) for x in pop]
     pop = pool.starmap(assess_item, pop)
     return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
-def assess_item(item,tasks,fitness):
+def assess_item(item,fitness):
     """
     Calculate the fitness of a single genome
 
     Parameters:
         item : A single member of the population
-        tasks (list) : A list of tasks used to assess the population
         fitness (func) : A function with type Genome, Task -> Float
     
     Return:
         item, with an updated fitness value
 
     """
-    item.fitness = fitness(item.genome,tasks)
+    item.fitness = fitness(item.genome)
     return item
 
-def mutate(pop, pool, tasks,fitness):
+def mutate(pop, pool,fitness):
     """
     Mutate each member of the population
 
     Parameters:
         pop (list) : A list of members of the population
         pool (multiprocessing.pool.Pool) : A multiprocessing pool
-        tasks (list) : A list of tasks used to assess the population
         fitness (func) : A function with type Genome, Task -> Float
 
     Return:
         pop, with a mutation applied to each member
 
     """
-    pop = [(x,tasks,fitness) for x in pop]
+    pop = [(x,fitness) for x in pop]
     pop = pool.starmap(mutate_item,pop)
     # print(f"{sum(x[1] for x in pop)} successful mutations")
     # pop = [x[0] for x in pop]
     return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
-def mutate_item(item,tasks,fitness):
+def mutate_item(item,fitness):
     """
     Mutate a single genome, only keep the result if it's better than the parent
 
     Parameters:
         item : A single member of the population
-        tasks (list) : A list of tasks used to assess the population
         fitness (func) : A function with type Genome, Task -> Float
     
     Return:
@@ -82,7 +78,7 @@ def mutate_item(item,tasks,fitness):
 
     child = item.genome.copy()
     child.beerMutate(mutationRate)
-    cfitness = fitness(child,tasks)
+    cfitness = fitness(child)
     if cfitness >= item.fitness:
         return Citizen(child,cfitness)
     return item
@@ -104,7 +100,7 @@ def rank_reduce(fitnesses):
 def min_fitness(fitnesses):
     return min(fitnesses)
 
-def initialise(initial_pop_size, pop_size, pool, tasks, fitness):
+def initialise(pop_size, pool, fitness):
     """
     Initialise a population of random genomes
 
@@ -112,7 +108,6 @@ def initialise(initial_pop_size, pop_size, pool, tasks, fitness):
         pop_size (int) : The number of members of the seed population
         pop_size (int) : The number of members population members to be returned
         pool (multiprocessing.pool.Pool) : A multiprocessing pool
-        tasks (list) : A list of tasks used to assess the population
         fitness (func) : A function with type Genome, Task -> Float
         
     Return:
@@ -120,13 +115,8 @@ def initialise(initial_pop_size, pop_size, pool, tasks, fitness):
     """
 
     pop = []
-    while len(pop)<initial_pop_size:
+    while len(pop)<pop_size:
         pop.append(Citizen())
-
-    pop = assess(pop,pool,tasks,fitness)
-    pop = [x for x in pop if x.fitness != 0]
-    print(f"{len(pop)} non-zero members from a seed population of {initial_pop_size}")
-    pop = selection(pop,size=pop_size)
 
     return pop
 
@@ -153,10 +143,9 @@ def rank_roulette_select(pop,size=None):
 
 def sus(pop,size=None):
     # Bakers stochastic universal sampling
-    MaxExpOffspring = 3
+    MaxExpOffspring = 2.5
     if size == None:
         size = len(pop)
-
     # Rerank using bakers linear ranking method
     for count, i in enumerate(pop):
         i.rfitness = (MaxExpOffspring + (2.0 - 2.0*MaxExpOffspring)*((count)/(len(pop)-1)))/(size)

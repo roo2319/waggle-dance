@@ -51,8 +51,7 @@ class CTRNN():
         # Lastly we can update the outputs of each hidden node
         self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
         # We can now calculate the external output. 
-        return self.outputs[:self.outputCount]
-        # return np.multiply(self.outputWeights,self.outputs)[:self.outputCount]
+        return np.multiply(self.outputWeights,self.outputs)[:self.outputCount]
     
     def reset(self):
         """
@@ -112,8 +111,8 @@ class Genome():
         
         if oWeights is None:
             # oWeights = np.random.normal(scale=2,size=(outputsCount))
-            oWeights = np.random.uniform(-16,16,size=(outputsCount))
-            # oWeights = np.zeros(outputsCount)
+            # oWeights = np.random.uniform(-16,16,size=(outputsCount))
+            oWeights = np.ones(outputsCount)
         self.outputWeights = oWeights
 
         if weights is None:
@@ -174,16 +173,14 @@ class Genome():
         Perform mutation as described by Randall Beer
         """
         magnitude = np.random.normal(0,stddev)
-        mutationvector = np.random.normal(0,1,self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount))
+        mutationvector = np.random.normal(0,1,self.inputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount))
         mutationvector /= np.sqrt((mutationvector**2).sum(-1))
         mutationvector *= magnitude
 
         self.inputWeights  += 16 * mutationvector[:self.inputsCount]
-        self.outputWeights += 16 * mutationvector[self.inputsCount:self.inputsCount+self.outputsCount]
-        self.weights       += 16 * mutationvector[self.inputsCount+self.outputsCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
-        self.biases        += 16 * mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
-        # self.gains         += mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount:self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(2*self.hiddenCount)]
-        self.taus          += 25 * mutationvector[self.inputsCount+self.outputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):]
+        self.weights       += 16 * mutationvector[self.inputsCount:self.inputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
+        self.biases        += 16 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
+        self.taus          += 25 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):]
 
         self.inputWeights   = np.clip(self.inputWeights,-16,16)
         self.outputWeights  = np.clip(self.outputWeights,-16,16)

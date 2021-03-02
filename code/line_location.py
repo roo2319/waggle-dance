@@ -174,7 +174,16 @@ class line_location():
         return max(1 - abs(self.receiverPos-self.goal),0)
         # Sender Goal
         # return max(1 - abs(self.senderPos-self.goal),0)
-
+        # Cruel fitness
+        # dist = abs(self.receiverPos-self.goal)
+        # if dist <= 0.05:
+        #     return 1
+        # elif dist <= 0.1:
+        #     return 0.5
+        # elif dist <= 0.2: 
+        #     return 0.1
+        # else:
+        #     return 0
 
 # Testing, 1 second movement
 def main():
