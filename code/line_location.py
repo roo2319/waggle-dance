@@ -51,7 +51,7 @@ def tanhMotor(val):
     return (tanh(val)-0.5)/50
 
 def camposMotor(val):
-    return (2 * (val - 0.5))  * 0.01
+    return (2 * (val - 0.5))  * 0.01 * line_location.timestep
 
 motors = {"discreteMotor":discreteMotor, "clippedMotor1" : clippedMotor1, "clippedMotor2" : clippedMotor2, "clippedMotor3" : clippedMotor3, "sigmoidMotor" : sigmoidMotor, "tanhMotor" : tanhMotor, "camposMotor":camposMotor}
 motorFunction = clippedMotor1
@@ -110,7 +110,6 @@ class line_location():
             output (float) : The raw output of the CTRNN, passed into a motor function
         """
         pos = self.senderPos if isSender else self.receiverPos
-        # dx = self.tanhMotor(output)
         dx = motorFunction(output)
         pos += dx
         
@@ -118,7 +117,7 @@ class line_location():
             # This is where additional checks can be performed on the senders movement
             # self.senderPos = pos
             
-            self.senderPos = quickClip(0,0.35,pos)
+            self.senderPos = quickClip(0,0.3,pos)
 
         else:
             self.receiverPos = pos
