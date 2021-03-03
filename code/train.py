@@ -69,22 +69,29 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
         batch_start = time.time()
         pop = evolve.initialise(pop_size)
         generation = 0
+        mcount = 0
+        mcount2 = 0
         while generation < max_gen:
             rs = random.random()
             pop = evolve.assess(pop, pool, fitness,rs)
 
-            if file != None and generation % 20 == 0:
-                evolve.log_fitness(pop, generation, None)
-                print(f"Batch Time {time.time()-batch_start}")
-                batch_start = time.time()
+            if generation % 20 == 0:
                 with open("models/checkpoint.pkl",'wb') as g:
                     pickle.dump(pop[0].genome,g)
+                if file != None:
+                    evolve.log_fitness(pop, generation, mcount2, None)
+                    print(f"Batch Time {time.time()-batch_start}")
+                    batch_start = time.time()
+                    mcount2 = 0
             if write_every and generation % write_every==0:
-                evolve.log_fitness(pop, generation, file)
+                evolve.log_fitness(pop, generation, mcount, file)
+                mcount = 0
             generation += 1
 
             pop = evolve.sus(pop)
-            pop = evolve.mutate(pop, pool, fitness,rs)
+            pop, c = evolve.mutate(pop, pool, fitness,rs)
+            mcount += c
+            mcount2 += c
         
         
         best = pop[0]

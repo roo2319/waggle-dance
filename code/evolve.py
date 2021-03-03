@@ -5,11 +5,12 @@ import random
 mutationRate = 0.447
 centerCrossing = False
 class Citizen():
-    def __init__(self,genome=None,fitness=None):
+    def __init__(self,genome=None,fitness=None,age=0):
         if genome == None:
             genome = ctrnn.Genome(centerCrossing=centerCrossing)
         self.genome = genome
         self.fitness = fitness
+        self.age = age
         # Fitness for the purpose of sus
         self.rfitness = None
 
@@ -59,10 +60,11 @@ def mutate(pop, pool,fitness,rs):
 
     """
     pop = [(x,fitness,rs) for x in pop]
-    pop = pool.starmap(mutate_item,pop)
-    # print(f"{sum(x[1] for x in pop)} successful mutations")
+    result = pool.starmap(mutate_item,pop)
+    pop = [x[0] for x in result]
+    
     # pop = [x[0] for x in pop]
-    return sorted(pop, key = lambda i: i.fitness, reverse=True) 
+    return sorted(pop, key = lambda i: i.fitness, reverse=True), sum(x[1] for x in result)
 
 def mutate_item(item,fitness,rs):
     """
@@ -80,8 +82,9 @@ def mutate_item(item,fitness,rs):
     child.beerMutate(mutationRate)
     cfitness = fitness(child,rs)
     if cfitness >= item.fitness:
-        return Citizen(child,cfitness)
-    return item
+        return Citizen(child,cfitness), 1
+    item.age += 1
+    return item, 0
 
 def rank_reduce(fitnesses):
     """
@@ -143,7 +146,7 @@ def rank_roulette_select(pop,size=None):
 
 def sus(pop,size=None):
     # Bakers stochastic universal sampling
-    MaxExpOffspring = 2
+    MaxExpOffspring = 1.1
     if size == None:
         size = len(pop)
     # Rerank using bakers linear ranking method
@@ -157,7 +160,7 @@ def sus(pop,size=None):
     while len(newpop) < size:
         if rand < sum:
             # if you don't create a new citizen bad things happen
-            newpop.append(Citizen(pop[i].genome,pop[i].fitness))
+            newpop.append(Citizen(pop[i].genome,pop[i].fitness,pop[i].age))
             rand += 1
             continue
         i += 1
@@ -186,7 +189,7 @@ def truncation_select(pop):
 
 
 
-def log_fitness(pop, gen, file=None):
+def log_fitness(pop, gen, mcount, file=None):
     """
     Write aggregate statistics of the population, either to a file or to stdout
 
@@ -196,15 +199,16 @@ def log_fitness(pop, gen, file=None):
         file (file) : The file that will be written to, None -> Stdout
     """
     
-    fitness = []
-    for p in pop:
-        fitness.append(p.fitness)
-    line = "{:4d}: max:{:.3f}, min:{:.3f}, mean:{:.3f}".format(gen,max(fitness),min(fitness),statistics.mean(fitness))
+    fitness = [x.fitness for x in pop]
+    ages = [x.age for x in pop]
+    fline = "{:4d} - Fitness  : max:{:.3f}, min:{:.3f}, mean:{:.3f}".format(gen,max(fitness),min(fitness),statistics.mean(fitness))
+    aline = "{:4d} - Age      : max:{:.3f}, min:{:.3f}, median:{:.3f}".format(gen,max(ages),min(ages),statistics.median(ages))
+    mline = f"{gen:4d} - Mutations: {mcount}"
 
     if file:
-        file.write(line+"\n")
+        file.write(fline+"\n"+aline+"\n"+mline+"\n")
     else:
-        print(line)
+        print(fline+"\n"+aline+"\n"+mline+"\n")
 
 def main():
     pass
