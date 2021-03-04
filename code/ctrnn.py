@@ -180,10 +180,10 @@ class Genome():
         self.inputWeights  += 16 * mutationvector[:self.inputsCount]
         self.weights       += 16 * mutationvector[self.inputsCount:self.inputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
         self.biases        += 16 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
-        self.taus          += 25 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):]
+        self.taus          += 25 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):self.inputsCount+(self.hiddenCount*self.hiddenCount)+2*(self.hiddenCount)]
+        # self.outputWeights += 16 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount)+2*(self.hiddenCount):]
 
         self.inputWeights   = np.clip(self.inputWeights,-16,16)
-        self.outputWeights  = np.clip(self.outputWeights,-16,16)
         self.weights        = np.clip(self.weights,-16,16)
         self.biases         = np.clip(self.biases,-16,16)
         # self.gains          = np.clip(self.gains,-10,10)

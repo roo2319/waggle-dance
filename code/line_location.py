@@ -117,7 +117,7 @@ class line_location():
             # This is where additional checks can be performed on the senders movement
             # self.senderPos = pos
             
-            self.senderPos = quickClip(0,0.3,pos)
+            self.senderPos = quickClip(0,0.4,pos)
 
         else:
             self.receiverPos = pos

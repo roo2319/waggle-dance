@@ -62,6 +62,31 @@ def fitness(genome,rs):
     return aggregate_fitness(fitnesses)/maxfitness
 
 
+def evaluate(genome, rs):
+    sender = ctrnn.CTRNN(genome)
+    receiver = ctrnn.CTRNN(genome)
+    fitnesses = []
+
+    random.seed(rs)
+    for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), x) for x in np.arange(0.5,1,0.01)]:
+        sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
+
+        # Run the given simulation for up to num_steps time steps.
+        fitness = 0.0
+        while sim.t < simulation_seconds:
+            senderOut   = sender.eulerStep(sim.getState(True),time_const)[0]
+            receiverOut = receiver.eulerStep(sim.getState(False),time_const)[0]
+
+            sim.step(senderOut,receiverOut)
+
+        fitness = 1 if abs(sim.receiverPos - sim.goal) <= 0.05 else 0
+
+
+        fitnesses.append(fitness)
+
+
+    return statistics.mean(fitnesses)
+
 def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
     with Pool(processes=cpu_count()) as pool:
@@ -90,10 +115,16 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
             pop = evolve.sus(pop)
             pop, c = evolve.mutate(pop, pool, fitness,rs)
+            if generation % 100 == 0:
+                rs = random.random()
+                pop = evolve.assess(pop, pool, evaluate, rs)
+                print([x.fitness for x in pop])
             mcount += c
             mcount2 += c
         
-        
+        rs = random.random()
+        pop = evolve.assess(pop, pool, evaluate, rs)
+        print([x.fitness for x in pop])
         best = pop[0]
 
     return best
