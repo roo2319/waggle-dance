@@ -5,7 +5,7 @@ import random
 mutationRate = 0.447
 centerCrossing = False
 class Citizen():
-    def __init__(self,genome=None,fitness=None,age=0):
+    def __init__(self,genome=None,fitness=0,age=0):
         if genome == None:
             genome = ctrnn.Genome(centerCrossing=centerCrossing)
         self.genome = genome

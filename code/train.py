@@ -96,14 +96,16 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
         generation = 0
         mcount = 0
         mcount2 = 0
+        best = evolve.Citizen()
         while generation < max_gen:
             rs = random.random()
             pop = evolve.assess(pop, pool, fitness,rs)
-
-            if generation % 20 == 0:
+            if pop[0].fitness > best.fitness:
+                best = pop[0]
+                print(f"New best individual with fitness {best.fitness}")
                 with open("models/checkpoint.pkl",'wb') as g:
                     pickle.dump(pop[0].genome,g)
-                if file != None:
+            if generation % 20 == 0 and file != None:
                     evolve.log_fitness(pop, generation, mcount2, None)
                     print(f"Batch Time {time.time()-batch_start}")
                     batch_start = time.time()
@@ -125,8 +127,6 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
         rs = random.random()
         pop = evolve.assess(pop, pool, evaluate, rs)
         print([x.fitness for x in pop])
-        best = pop[0]
-
     return best
 
 
