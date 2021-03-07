@@ -102,6 +102,9 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             pop = evolve.assess(pop, pool, fitness,rs)
             if pop[0].fitness > best.fitness:
                 best = pop[0]
+                if best.fitness > 0.95:
+                    print(f"Hit early stopping condition, fitness = {best.fitness}")
+                    return best
                 print(f"New best individual with fitness {best.fitness}")
                 with open("models/checkpoint.pkl",'wb') as g:
                     pickle.dump(pop[0].genome,g)
