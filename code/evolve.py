@@ -13,6 +13,9 @@ class Citizen():
         self.age = age
         # Fitness for the purpose of sus
         self.rfitness = None
+    
+    def copy(self):
+        return Citizen(self.genome.copy(),self.fitness,self.age)
 
 def assess(pop, pool, fitness,rs):
     """
