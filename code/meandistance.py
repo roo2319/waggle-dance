@@ -78,6 +78,7 @@ def main():
     ax[0].set(xlabel="Goal Location",ylabel="Mean Absolute Distance")
     ax[1].errorbar(goal,endpos,yerr=enderr,fmt="bo")
     ax[1].set(xlabel="Goal Location",ylabel="Mean End Position")
+    ax[1].plot(np.arange(0.5,1,0.01),np.arange(0.5,1,0.01))
     fig.suptitle(sys.argv[2])
     plt.show()
 
