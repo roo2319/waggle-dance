@@ -81,6 +81,8 @@ class line_location():
         self.receiverPos = receiverPos
         self.receiverVelocity = 0
         self.t = 0
+        self.touches = 0
+        self.prevcon = 1
 
     def step(self, senderOutput=0, receieverOutput=0):
         """
@@ -136,6 +138,10 @@ class line_location():
             and Target Sensor / Constant Value Sensor
         """
         contactSensor = 1 if abs(self.senderPos - self.receiverPos) <= 0.4 else 0
+        if self.prevcon != contactSensor:
+            self.prevcon = contactSensor
+            if self.prevcon:
+                self.touches += 1
         if isSender:
             targetSensor = abs(self.senderPos - self.goal)
             return [contactSensor,self.senderPos,targetSensor]
@@ -174,6 +180,8 @@ class line_location():
         return max(1 - abs(self.receiverPos-self.goal),0)
         # Sender Goal
         # return max(1 - abs(self.senderPos-self.goal),0)
+        # Touch Less
+        # return max(1 - abs(self.receiverPos-self.goal) - self.touches/10,0)
         # Cruel fitness
         # dist = abs(self.receiverPos-self.goal)
         # if dist <= 0.05:
