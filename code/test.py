@@ -106,6 +106,8 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
     print("   Sender = {0:.4f}".format(sim.senderPos))
     print(" Receiver = {0:.4f}".format(sim.receiverPos))
     print("     Goal = {0:.4f}".format(sim.goal))
+    print(f"  Nudges = {sim.touches}")
+    print(f"  C time = {sim.ctime}")
     print(f" fitness = {sim.fitness()}")
     print()
     print(f"Max {max(vals)},Min {min(vals)}, Average {sum(vals)/len(vals)}")
