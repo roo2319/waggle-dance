@@ -77,10 +77,9 @@ class line_location():
             receiverPos = random.uniform(0,0.3)
         self.goal = goal
         self.senderPos = senderPos
-        self.senderVelocity = 0
         self.receiverPos = receiverPos
-        self.receiverVelocity = 0
         self.t = 0
+        self.ctime = 0
         self.touches = 0
         self.prevcon = 1
 
@@ -142,6 +141,9 @@ class line_location():
             self.prevcon = contactSensor
             if self.prevcon:
                 self.touches += 1
+        
+        if contactSensor and self.t > 150:
+            self.ctime += 1 # Remember this will be counted twice
         if isSender:
             targetSensor = abs(self.senderPos - self.goal)
             return [contactSensor,self.senderPos,targetSensor]
@@ -182,7 +184,11 @@ class line_location():
         # return max(1 - abs(self.senderPos-self.goal),0)
         # Touch Less
         # return max(1 - abs(self.receiverPos-self.goal) - self.touches/10,0)
-        # Cruel fitness
+        # Eval Fitness
+        # return 1 if abs(self.receiverPos-self.goal) <= 0.05 else 0
+        # Ctime Fitness
+        # return max(1 - abs(self.receiverPos-self.goal) - self.ctime/300,0)
+        # Nudge fitness
         # dist = abs(self.receiverPos-self.goal)
         # if dist <= 0.05:
         #     return 1
