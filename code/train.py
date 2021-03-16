@@ -63,12 +63,12 @@ def fitness(genome,rs):
 
 
 def evaluate(genome, rs):
-    sender = ctrnn.CTRNN(genome)
-    receiver = ctrnn.CTRNN(genome)
     fitnesses = []
 
     random.seed(rs)
     for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), x) for x in np.arange(0.5,1,0.01)]:
+        sender = ctrnn.CTRNN(genome)
+        receiver = ctrnn.CTRNN(genome)
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
 
         # Run the given simulation for up to num_steps time steps.
