@@ -47,9 +47,9 @@ def runtrial(c, task):
         # print(sim.getAsciiState())
     distance = abs(sim.goal - sim.receiverPos)
     if sim.fitness() > 0.95:
-        return (1,distance)
+        return (1,distance,sim.touches,sim.ctime)
     else:
-        return (0,distance)
+        return (0,distance,sim.touches,sim.ctime)
 
 
 def main():
@@ -67,9 +67,13 @@ def main():
 
     successes = [result[0] for result in results]
     distances = [result[1] for result in results]
+    nudges    = [result[2] for result in results]
+    ctime     = [result[3] for result in results]
 
     print(f"{sum(successes)} ({100*sum(successes)/ntrials}%) successes across {ntrials} trials")
     print(f"Mean absolute distance from goal: {mean(distances):.4f} (Standard deviation {stdev(distances):.4f})")
+    print(f"Mean Nudges: {mean(nudges)} ")
+    print(f"Mean ctime: {mean(ctime)}")
 
 if __name__ == '__main__':
     main()
