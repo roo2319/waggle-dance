@@ -45,7 +45,7 @@ goal = cube_location.Point(*goals[0])
 def fitness(genome,rs,goal):
     fitnesses = []
     random.seed(rs)
-    for sp, rp in [((random.uniform(0,0.3), random.uniform(0,0.3),random.uniform(0,0.3)),(random.uniform(0,0.3), random.uniform(0,0.3),random.uniform(0,0.3))) for _ in range(ntrials)]:
+    for sp, rp in [((random.uniform(-0.3,0.3), random.uniform(-0.3,0.3),random.uniform(-0.3,0.3)),(random.uniform(-0.3,0.3), random.uniform(-0.3,0.3),random.uniform(-0.3,0.3))) for _ in range(ntrials)]:
         sender = ctrnn.CTRNN(genome)
         receiver = ctrnn.CTRNN(genome)
         sp = cube_location.Point(*sp)

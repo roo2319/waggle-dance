@@ -109,9 +109,9 @@ class cube_location():
         if goal == None:
             goal = Point(*[random.uniform(0.5,1),random.uniform(0.5,1),random.uniform(0.5,1)])
         if senderPos == None:
-            senderPos = Point(*[random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0,0.3)])
+            senderPos = Point(*[random.uniform(-0.3,0.3),random.uniform(-0.3,0.3),random.uniform(-0.3,0.3)])
         if receiverPos == None:
-            receiverPos = Point(*[random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0,0.3)])
+            receiverPos = Point(*[random.uniform(-0.3,0.3),random.uniform(-0.3,0.3),random.uniform(-0.3,0.3)])
         self.goal = goal
         self.senderPos = senderPos
         self.receiverPos = receiverPos

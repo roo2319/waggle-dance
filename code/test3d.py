@@ -38,7 +38,7 @@ print(f" Receiver = {rp}")
 print()
 fig, ax = plt.subplots(3,5)
 i = 0
-for g in itertools.product([0,1],repeat=3):
+for g in list(itertools.product([0,1,-1],repeat=3)):
     goal = cube_location.Point(*g)
     displacement = [[],[],[]]
     rsens = [[],[],[]]
