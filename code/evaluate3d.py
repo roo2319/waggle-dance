@@ -45,7 +45,7 @@ def runtrial(c):
 
         # print(sim.getAsciiState())
     distance = sim.goal.dist(sim.receiverPos)
-    if sim.fitness() > 0:
+    if sim.fitness() > 0.9:
         return (1,distance,0,0)
     else:
         return (0,distance,0,0)
