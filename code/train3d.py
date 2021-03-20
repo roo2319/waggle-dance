@@ -37,8 +37,7 @@ aggregate_fitness = evolve.rank_reduce
 maxfitness = aggregate_fitness([1]*ntrials)
 time_const = cube_location.cube_location.timestep
 
-goals = list(itertools.product([0,1,-1],repeat=3))
-goals.remove((0,0,0))
+goals = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]
 goal = cube_location.Point(*goals[0])
 
 
