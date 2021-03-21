@@ -207,7 +207,9 @@ class cube_location():
             The fitness of the simulation (float)
         """
         # Receiver goal
-        return max(1 - self.receiverPos.dist(self.goal),0)
+        # return max(1 - self.receiverPos.dist(self.goal),0)
+        return max((3.46 - self.receiverPos.dist(self.goal))/3.46,0)
+
 
 
 # Testing, 1 second movement

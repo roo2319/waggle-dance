@@ -38,21 +38,25 @@ maxfitness = aggregate_fitness([1]*ntrials)
 time_const = cube_location.cube_location.timestep
 
 goals = [[1,0,0],[-1,0,0],[0,1,0],[0,-1,0],[0,0,1],[0,0,-1]]
-goal = cube_location.Point(*goals[0])
+goal = [cube_location.Point(*goals[0])]
+goals.remove(goals[0])
 
 
 def fitness(genome,rs,goal):
     fitnesses = []
     random.seed(rs)
-    for sp, rp in [((random.uniform(-0.3,0.3), random.uniform(-0.3,0.3),random.uniform(-0.3,0.3)),(random.uniform(-0.3,0.3), random.uniform(-0.3,0.3),random.uniform(-0.3,0.3))) for _ in range(ntrials)]:
+    # for sp, rp in [((random.uniform(-0.3,0.3), random.uniform(-0.3,0.3),random.uniform(-0.3,0.3)),(random.uniform(-0.3,0.3), random.uniform(-0.3,0.3),random.uniform(-0.3,0.3))) for _ in range(ntrials)]:
+    for _ in range(ntrials):    
         sender = ctrnn.CTRNN(genome)
         receiver = ctrnn.CTRNN(genome)
-        sp = cube_location.Point(*sp)
-        rp = cube_location.Point(*rp)
+        # sp = cube_location.Point(*sp)
+        # rp = cube_location.Point(*rp)
+        sp = cube_location.Point(*[0,0,0])
+        rp = cube_location.Point(*[0,0,0])
         # goal = cube_location.Point(*goal)
 
 
-        sim = cube_location.cube_location(senderPos=sp,receiverPos=rp, goal=goal)
+        sim = cube_location.cube_location(senderPos=sp,receiverPos=rp, goal=random.choice(goal))
 
         # Run the given simulation for up to num_steps time steps.
         fitness = 0.0
@@ -86,9 +90,10 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             meanfit = mean([x.fitness for x in pop])
             if meanfit > nextfit:
                 nextfit = min(meanfit * 1.2,0.9)
-                prevgoal = goal
-                while goal == prevgoal:
-                    goal = cube_location.Point(*random.choice(goals))
+                if len(goals) != 0:
+                    ng = random.choice(goals)
+                    goals.remove(ng)
+                    goal.append(cube_location.Point(*ng))
                 print(f"Changed goal to {goal}")
 
             if generation % 20 == 0 and file != None:
