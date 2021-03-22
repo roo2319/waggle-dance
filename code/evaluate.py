@@ -22,8 +22,8 @@ line_location.motorFunction = line_location.motors[settings.get("motor","clipped
 
 
 def runtrial(c, task):
-    sp, rp, goal = task
-    sim = line_location.line_location(senderPos=sp,receiverPos=rp,goal=goal)
+    sp, rp, goal, goal2 = task
+    sim = line_location.line_location(senderPos=sp,receiverPos=rp,goal=goal, goal2=goal2)
     time_const = line_location.line_location.timestep
 
     sender = ctrnn.CTRNN(c)
@@ -45,11 +45,13 @@ def runtrial(c, task):
 
 
         # print(sim.getAsciiState())
-    distance = abs(sim.goal - sim.receiverPos)
+    rdistance = abs(sim.goal - sim.receiverPos)
+    sdistance = abs(sim.goal - sim.senderPos)
+
     if sim.fitness() > 0.95:
-        return (1,distance,sim.touches,sim.ctime)
+        return (1,rdistance,sdistance,sim.touches,sim.ctime)
     else:
-        return (0,distance,sim.touches,sim.ctime)
+        return (0,rdistance,sdistance,sim.touches,sim.ctime)
 
 
 def main():
@@ -62,16 +64,18 @@ def main():
     absdist = 0
     
     with Pool(processes=cpu_count()) as pool:
-        tasks = [(c,(random.uniform(0,0.3),random.uniform(0,0.3),random.uniform(0.5,1.0))) for _ in range(ntrials)]
+        tasks = [(c,(random.uniform(-0.3,0.3),random.uniform(-0.3,0.3),random.uniform(0.5,1.0),random.uniform(-0.5,-1.0))) for _ in range(ntrials)]
         results = pool.starmap(runtrial,tasks)
 
-    successes = [result[0] for result in results]
-    distances = [result[1] for result in results]
-    nudges    = [result[2] for result in results]
-    ctime     = [result[3] for result in results]
+    successes  = [result[0] for result in results]
+    rdistances  = [result[1] for result in results]
+    sdistances = [result[2] for result in results]
+    nudges     = [result[3] for result in results]
+    ctime      = [result[4] for result in results]
 
     print(f"{sum(successes)} ({100*sum(successes)/ntrials}%) successes across {ntrials} trials")
-    print(f"Mean absolute distance from goal: {mean(distances):.4f} (Standard deviation {stdev(distances):.4f})")
+    print(f"Mean absolute rdistance from goal: {mean(rdistances):.4f} (Standard deviation {stdev(rdistances):.4f})")
+    print(f"Mean absolute sdistance from goal: {mean(sdistances):.4f} (Standard deviation {stdev(sdistances):.4f})")
     print(f"Mean Nudges: {mean(nudges)} ")
     print(f"Mean ctime: {mean(ctime)}")
 

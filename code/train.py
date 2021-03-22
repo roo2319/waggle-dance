@@ -40,10 +40,10 @@ def fitness(genome,rs):
     fitnesses = []
 
     random.seed(rs)
-    for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), random.uniform(0.5,1)) for _ in range(ntrials)]:
+    for sp, rp, goal, goal2 in [(random.uniform(-0.3,0.3), random.uniform(-0.3,0.3), random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
         sender = ctrnn.CTRNN(genome)
         receiver = ctrnn.CTRNN(genome)
-        sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
+        sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal, goal2=goal2)
 
         # Run the given simulation for up to num_steps time steps.
         fitness = 0.0
@@ -61,31 +61,6 @@ def fitness(genome,rs):
 
     return aggregate_fitness(fitnesses)/maxfitness
 
-
-def evaluate(genome, rs):
-    fitnesses = []
-
-    random.seed(rs)
-    for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), x) for x in np.arange(0.5,1,0.01)]:
-        sender = ctrnn.CTRNN(genome)
-        receiver = ctrnn.CTRNN(genome)
-        sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
-
-        # Run the given simulation for up to num_steps time steps.
-        fitness = 0.0
-        while sim.t < simulation_seconds:
-            senderOut   = sender.eulerStep(sim.getState(True),time_const)[0]
-            receiverOut = receiver.eulerStep(sim.getState(False),time_const)[0]
-
-            sim.step(senderOut,receiverOut)
-
-        fitness = 1 if abs(sim.receiverPos - sim.goal) <= 0.05 else 0
-
-
-        fitnesses.append(fitness)
-
-
-    return statistics.mean(fitnesses)
 
 def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
@@ -114,14 +89,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             pop, c = evolve.mutate(pop, pool, fitness,rs)
             mcount += c
             mcount2 += c
-
-            if generation % 100 == 0:
-                rs = random.random()
-                pop = evolve.assess(pop, pool, evaluate, rs)
-                print([x.fitness for x in pop])
                 
-        rs = random.random()
-        pop = evolve.assess(pop, pool, evaluate, rs)
     return pop[0]
 
 

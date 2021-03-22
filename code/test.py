@@ -27,7 +27,7 @@ print(c)
 
 
 
-positions = (random.uniform(0,0.3),random.uniform(0,0.3))
+positions = (random.uniform(-0.3,0.3),random.uniform(-0.3,0.3))
 # positions = (0.3,0.05)
 
 sp,rp = positions

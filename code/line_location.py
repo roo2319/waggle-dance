@@ -68,14 +68,18 @@ class line_location():
     """
     timestep = 1
 
-    def __init__(self,senderPos=None,receiverPos=None,goal=None):
+    def __init__(self,senderPos=None,receiverPos=None,goal=None,goal2=None):
         if goal == None:
             goal = random.uniform(0.5,1)
+        if goal2 == None:
+            goal = random.uniform(-0.5,-1)
         if senderPos == None:
-            senderPos = random.uniform(0,0.3)
+            senderPos = random.uniform(-0.3,0.3)
         if receiverPos == None:
-            receiverPos = random.uniform(0,0.3)
+            receiverPos = random.uniform(-0.3,0.3)
         self.goal = goal
+        self.goal2 = goal2
+        self.truegoal = goal if abs(goal) > abs(goal2) else goal2
         self.senderPos = senderPos
         self.receiverPos = receiverPos
         self.t = 0
@@ -118,7 +122,7 @@ class line_location():
             # This is where additional checks can be performed on the senders movement
             # self.senderPos = pos
             
-            self.senderPos = quickClip(0,0.3,pos)
+            self.senderPos = pos
 
         else:
             self.receiverPos = pos
@@ -148,7 +152,8 @@ class line_location():
             targetSensor = abs(self.senderPos - self.goal)
             return [contactSensor,self.senderPos,targetSensor]
         else:
-            return [contactSensor,self.receiverPos,-1]
+            targetSensor = abs(self.senderPos - self.goal2)
+            return [contactSensor,self.receiverPos,targetSensor]
 
     
     def getLoggingData(self):
@@ -179,7 +184,7 @@ class line_location():
             The fitness of the simulation (float)
         """
         # Receiver goal
-        return max(1 - abs(self.receiverPos-self.goal),0)
+        return max(1 - abs(self.receiverPos-self.truegoal) - abs(self.senderPos - self.truegoal),0)
         # Sender Goal
         # return max(1 - abs(self.senderPos-self.goal),0)
         # Touch Less
