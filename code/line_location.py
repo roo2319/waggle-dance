@@ -149,10 +149,10 @@ class line_location():
         if contactSensor and self.t > 150:
             self.ctime += 1 # Remember this will be counted twice
         if isSender:
-            targetSensor = abs(self.senderPos - self.goal)
+            targetSensor = (self.senderPos - self.goal)
             return [contactSensor,self.senderPos,targetSensor]
         else:
-            targetSensor = abs(self.senderPos - self.goal2)
+            targetSensor = (self.senderPos - self.goal2)
             return [contactSensor,self.receiverPos,targetSensor]
 
     
