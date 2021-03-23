@@ -152,7 +152,7 @@ class line_location():
             targetSensor = (self.senderPos - self.goal)
             return [contactSensor,self.senderPos,targetSensor]
         else:
-            targetSensor = (self.senderPos - self.goal2)
+            targetSensor = (self.receiverPos - self.goal2)
             return [contactSensor,self.receiverPos,targetSensor]
 
     
