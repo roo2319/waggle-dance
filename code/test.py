@@ -108,7 +108,7 @@ for _ in range(5):
     print("Final conditions:")
     print("   Sender = {0:.4f}".format(sim.senderPos))
     print(" Receiver = {0:.4f}".format(sim.receiverPos))
-    print("     Goal = {0:.4f}".format(sim.goal))
+    print("     Goal = {0:.4f}".format(goal))
     print(f"  Nudges = {sim.touches}")
     print(f"  C time = {sim.ctime}")
     print(f" fitness = {sim.fitness()}")
