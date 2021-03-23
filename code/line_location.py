@@ -72,7 +72,7 @@ class line_location():
         if goal == None:
             goal = random.uniform(0.5,1)
         if goal2 == None:
-            goal = random.uniform(-0.5,-1)
+            goal2 = random.uniform(-0.5,-1)
         if senderPos == None:
             senderPos = random.uniform(-0.3,0.3)
         if receiverPos == None:
