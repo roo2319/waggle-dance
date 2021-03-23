@@ -27,7 +27,7 @@ print(c)
 
 
 
-positions = (random.uniform(-0.3,0.3),random.uniform(-0.3,0.3))
+positions = (0,0)
 # positions = (0.3,0.05)
 
 sp,rp = positions
@@ -37,11 +37,12 @@ print(" Receiver = {0:.4f}".format(rp))
 print()
 fig, ax = plt.subplots(3,5)
 i = 0
-for goal in [0.5,0.6,0.7,0.8,0.9]:
+for _ in range(5):
     displacement = [[],[],[]]
     rsens = [[],[],[]]
     ssens = [[],[],[]]
-    sim = line_location.line_location(senderPos=sp,receiverPos=rp,goal=goal)
+    sim = line_location.line_location(senderPos=sp,receiverPos=rp)
+    goal = sim.truegoal
     time_const = line_location.line_location.timestep
 
 
@@ -88,6 +89,8 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
     ax[0][i].legend()
     ax[1][i].plot(displacement[0],rsens[0],label="Contact")
     ax[1][i].plot(displacement[0],rsens[1],label="Self Position")
+    ax[1][i].plot(displacement[0],rsens[2],label="Goal Distance")
+
     # ax[1][i].plot(displacement[0],rsens[2],label="Constant Value")
     ax[1][i].set_title(f"Receiver Sensors")
     ax[1][i].legend()
