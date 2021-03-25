@@ -85,8 +85,9 @@ for _ in range(5):
     ax[0][i].plot(displacement[0],displacement[1],label="receiver")
     ax[0][i].plot(displacement[0],displacement[2],label="sender")
     ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),label="goal")
-    ax[0][i].set_title(f"Goal = {goal}\nReceiver = {sim.receiverPos:.2f}\nFitness = {sim.fitness():.2f}")
+    ax[0][i].set_title(f"Goal = {goal}\nSender = {sim.senderPos:.2f},{sim.goal:.2f}\nReceiver = {sim.receiverPos:.2f},{sim.goal2:.2f}\nFitness = {sim.fitness():.2f}")
     ax[0][i].legend()
+    ax[0][i].set_ylim([-1,1])
     ax[1][i].plot(displacement[0],rsens[0],label="Contact")
     ax[1][i].plot(displacement[0],rsens[1],label="Self Position")
     ax[1][i].plot(displacement[0],rsens[2],label="Goal Distance")
@@ -94,11 +95,15 @@ for _ in range(5):
     # ax[1][i].plot(displacement[0],rsens[2],label="Constant Value")
     ax[1][i].set_title(f"Receiver Sensors")
     ax[1][i].legend()
+    ax[1][i].set_ylim([-1,1])
+
     ax[2][i].plot(displacement[0],ssens[0],label="Contact")
     ax[2][i].plot(displacement[0],ssens[1],label="Self Position")
     ax[2][i].plot(displacement[0],ssens[2],label="Goal Distance")
     ax[2][i].set_title(f"Sender Sensors")
     ax[2][i].legend()
+    ax[2][i].set_ylim([-1,1])
+
     i+=1
         # print(sim.getAsciiState())
 
