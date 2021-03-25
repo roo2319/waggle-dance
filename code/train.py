@@ -40,7 +40,7 @@ def fitness(genome,rs):
     fitnesses = []
 
     random.seed(rs)
-    for sp, rp, goal, goal2 in [(random.uniform(-0.3,0.3), random.uniform(-0.3,0.3), random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
+    for sp, rp, goal, goal2 in [(0,0, random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
         sender = ctrnn.CTRNN(genome)
         receiver = ctrnn.CTRNN(genome)
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal, goal2=goal2)

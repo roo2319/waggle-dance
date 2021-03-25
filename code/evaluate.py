@@ -45,8 +45,8 @@ def runtrial(c, task):
 
 
         # print(sim.getAsciiState())
-    rdistance = abs(sim.goal - sim.receiverPos)
-    sdistance = abs(sim.goal - sim.senderPos)
+    rdistance = abs(sim.truegoal - sim.receiverPos)
+    sdistance = abs(sim.truegoal - sim.senderPos)
 
     if sim.fitness() > 0.95:
         return (1,rdistance,sdistance,sim.touches,sim.ctime)

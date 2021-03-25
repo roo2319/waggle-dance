@@ -140,20 +140,20 @@ class line_location():
             A list(float) containing the Contact sensor, Self Position sensor
             and Target Sensor / Constant Value Sensor
         """
-        contactSensor = 1 if abs(self.senderPos - self.receiverPos) <= 0.4 else 0
-        if self.prevcon != contactSensor:
-            self.prevcon = contactSensor
-            if self.prevcon:
-                self.touches += 1
+        # contactSensor = 1 if abs(self.senderPos - self.receiverPos) <= 0.4 else 0
+        # if self.prevcon != contactSensor:
+        #     self.prevcon = contactSensor
+        #     if self.prevcon:
+        #         self.touches += 1
         
-        if contactSensor and self.t > 150:
-            self.ctime += 1 # Remember this will be counted twice
+        # if contactSensor and self.t > 150:
+        #     self.ctime += 1 # Remember this will be counted twice
         if isSender:
             targetSensor = (self.senderPos - self.goal)
-            return [contactSensor,self.senderPos,targetSensor]
+            return [self.receiverPos,self.senderPos,targetSensor]
         else:
             targetSensor = (self.receiverPos - self.goal2)
-            return [contactSensor,self.receiverPos,targetSensor]
+            return [self.senderPos,self.receiverPos,targetSensor]
 
     
     def getLoggingData(self):
