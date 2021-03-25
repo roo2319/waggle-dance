@@ -150,10 +150,17 @@ class line_location():
         #     self.ctime += 1 # Remember this will be counted twice
         if isSender:
             targetSensor = (self.senderPos - self.goal)
+            distanceSensor = (self.senderPos - self.receiverPos)
             return [self.receiverPos,self.senderPos,targetSensor]
+            # return [self.receiverPos,distanceSensor,targetSensor]
+
         else:
             targetSensor = (self.receiverPos - self.goal2)
+            distanceSensor = (self.receiverPos - self.senderPos)
             return [self.senderPos,self.receiverPos,targetSensor]
+            # return [self.senderPos,distanceSensor,targetSensor]
+
+
 
     
     def getLoggingData(self):
@@ -183,27 +190,12 @@ class line_location():
         Return:
             The fitness of the simulation (float)
         """
-        # Receiver goal
-        return max(1 - abs(self.receiverPos-self.truegoal) - abs(self.senderPos - self.truegoal),0)
-        # Sender Goal
-        # return max(1 - abs(self.senderPos-self.goal),0)
-        # Touch Less
-        # return max(1 - abs(self.receiverPos-self.goal) - self.touches/10,0)
-        # Eval Fitness
-        # return 1 if abs(self.receiverPos-self.goal) <= 0.05 else 0
-        # Ctime Fitness
-        # return max(1 - abs(self.receiverPos-self.goal) - self.ctime/300,0)
-        # Nudge fitness
-        # dist = abs(self.receiverPos-self.goal)
-        # if dist <= 0.05:
-        #     return 1
-        # elif dist <= 0.1:
-        #     return 0.5
-        # elif dist <= 0.2: 
-        #     return 0.1
+        return (max(1 - abs(self.receiverPos-self.truegoal),0) +  max(1 - abs(self.senderPos-self.truegoal),0))/2
+        # if self.truegoal == self.goal:
+        #     return (max(1 - abs(self.receiverPos - self.goal),0) 
         # else:
-        #     return 0
-
+        #     return (max(1 - abs(self.senderPos - self.goal2),0) 
+        
 # Testing, 1 second movement
 def main():
     sim = line_location(1)
