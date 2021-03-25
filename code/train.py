@@ -32,15 +32,26 @@ line_location.motorFunction = line_location.motors[settings.get("motor","clipped
 
 
 aggregate_fitness = evolve.rank_reduce
+# aggregate_fitness = min
 maxfitness = aggregate_fitness([1]*ntrials)
 time_const = line_location.line_location.timestep
 
 
 def fitness(genome,rs):
+    random.seed(rs)
+
     fitnesses = []
 
-    random.seed(rs)
-    for sp, rp, goal, goal2 in [(0,0, random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
+    # for sp, rp, goal, goal2 in [(0,0, random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
+    for sp, rp in [(0,0) for _ in range(ntrials)]:
+        goals = random.uniform(0.5,1),random.uniform(0.5,1)
+        if random.random() < 0.66:
+            goals = sorted(goals)
+        else:
+            goals = sorted(goals,reverse=True)
+        goals[1] = -goals[1]
+        goal, goal2 = goals
+        
         sender = ctrnn.CTRNN(genome)
         receiver = ctrnn.CTRNN(genome)
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal, goal2=goal2)
