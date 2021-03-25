@@ -45,8 +45,8 @@ def runtrial(c, task):
 
 
         # print(sim.getAsciiState())
-    rdistance = abs(sim.truegoal - sim.receiverPos)
-    sdistance = abs(sim.truegoal - sim.senderPos)
+    rdistance = abs(sim.goal - sim.receiverPos)
+    sdistance = abs(sim.goal2 - sim.senderPos)
 
     if sim.fitness() > 0.95:
         return (1,rdistance,sdistance,sim.touches,sim.ctime)
@@ -64,7 +64,7 @@ def main():
     absdist = 0
     
     with Pool(processes=cpu_count()) as pool:
-        tasks = [(c,(random.uniform(-0.3,0.3),random.uniform(-0.3,0.3),random.uniform(0.5,1.0),random.uniform(-0.5,-1.0))) for _ in range(ntrials)]
+        tasks = [(c,(0,0,random.uniform(0.5,1.0),random.uniform(-0.5,-1.0))) for _ in range(ntrials)]
         results = pool.starmap(runtrial,tasks)
 
     successes  = [result[0] for result in results]
