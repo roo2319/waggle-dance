@@ -45,7 +45,7 @@ def stage1(genome,rs):
 
     # for sp, rp, goal, goal2 in [(0,0, random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
     for sp, rp in [(0,0) for _ in range(ntrials)]:
-        goals = random.choice([[0.5,-1],[1,-0.5],[1,-0.5]])
+        goals = random.choice([[0.5,-1],[0.5,-1],[0.5,-1],[1,-0.5]])
         goal, goal2 = goals
         
         sender = ctrnn.CTRNN(genome)
@@ -74,8 +74,15 @@ def stage2(genome,rs):
     fitnesses = []
 
     for sp, rp in [(0,0) for _ in range(ntrials)]:
-        goal, goal2 = random.uniform(0.5,1),random.uniform(-0.5,-1)
+        goals = random.uniform(0.5,1),random.uniform(0.5,1)
+        if random.random() < 0.75:
+            goals = sorted(goals)
+        else:
+            goals = sorted(goals,reverse=True)
+        goals[1] = -goals[1]
         
+        goal, goal2 = goals
+
         sender = ctrnn.CTRNN(genome)
         receiver = ctrnn.CTRNN(genome)
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal, goal2=goal2)
@@ -111,7 +118,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             rs = random.random()
             pop = evolve.assess(pop, pool, stage1,rs)
 
-            if mean([x.fitness for x in pop]) > 0.9:
+            if mean([x.fitness for x in pop]) > 0.95:
                 break
 
             if generation % 20 == 0 and file != None:
