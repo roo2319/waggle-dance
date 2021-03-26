@@ -22,7 +22,16 @@ line_location.motorFunction = line_location.motors[settings.get("motor","clipped
 
 
 def runtrial(c, task):
-    sp, rp, goal, goal2 = task
+    sp, rp = task
+    hi = random.uniform(0.5,1)
+    lo = random.uniform(0.5,hi)
+    if random.random() < 0.75:
+        goals = lo,-hi
+    else:
+        goals = hi,-lo
+        
+    goal, goal2 = goals
+
     sim = line_location.line_location(senderPos=sp,receiverPos=rp,goal=goal, goal2=goal2)
     time_const = line_location.line_location.timestep
 
@@ -64,7 +73,7 @@ def main():
     absdist = 0
     
     with Pool(processes=cpu_count()) as pool:
-        tasks = [(c,(0,0,random.uniform(0.5,1.0),random.uniform(-0.5,-1.0))) for _ in range(ntrials)]
+        tasks = [(c,(0,0)) for _ in range(ntrials)]
         results = pool.starmap(runtrial,tasks)
 
     successes  = [result[0] for result in results]
