@@ -74,12 +74,19 @@ def stage2(genome,rs):
     fitnesses = []
 
     for sp, rp in [(0,0) for _ in range(ntrials)]:
-        goals = random.uniform(0.5,1),random.uniform(0.5,1)
+        # goals = random.uniform(0.5,1),random.uniform(0.5,1)
+        # if random.random() < 0.75:
+        #     goals = sorted(goals)
+        # else:
+        #     goals = sorted(goals,reverse=True)
+        # goals[1] = -goals[1]
+
+        hi = random.uniform(0.5,1)
+        lo = random.uniform(0.5,hi)
         if random.random() < 0.75:
-            goals = sorted(goals)
+            goals = lo,-hi
         else:
-            goals = sorted(goals,reverse=True)
-        goals[1] = -goals[1]
+            goals = hi,-lo
         
         goal, goal2 = goals
 

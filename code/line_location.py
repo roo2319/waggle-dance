@@ -80,6 +80,7 @@ class line_location():
         self.goal = goal
         self.goal2 = goal2
         self.truegoal = goal if abs(goal) > abs(goal2) else goal2
+        self.falsegoal = goal if abs(goal) < abs(goal2) else goal2
         self.senderPos = senderPos
         self.receiverPos = receiverPos
         self.t = 0
@@ -190,6 +191,8 @@ class line_location():
         Return:
             The fitness of the simulation (float)
         """
+        if abs(self.receiverPos - self.senderPos) > 1:
+            return 0
         return (max(1 - abs(self.receiverPos-self.truegoal),0) +  max(1 - abs(self.senderPos-self.truegoal),0))/2
         # if self.truegoal == self.goal:
         #     return (max(1 - abs(self.receiverPos - self.goal),0) 

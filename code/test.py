@@ -85,6 +85,8 @@ for _ in range(5):
     ax[0][i].plot(displacement[0],displacement[1],label="receiver")
     ax[0][i].plot(displacement[0],displacement[2],label="sender")
     ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),label="goal")
+    ax[0][i].plot(displacement[0],[sim.falsegoal]*len(displacement[0]),label="bad-goal")
+
     ax[0][i].set_title(f"Goal = {goal}\nSender = {sim.senderPos:.2f},{sim.goal:.2f}\nReceiver = {sim.receiverPos:.2f},{sim.goal2:.2f}\nFitness = {sim.fitness():.2f}")
     ax[0][i].legend()
     ax[0][i].set_ylim([-1,1])
