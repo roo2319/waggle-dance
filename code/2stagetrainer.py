@@ -74,7 +74,7 @@ def stage2(genome,rs):
     fitnesses = []
 
     for sp, rp in [(0,0) for _ in range(ntrials)]:
-        goal, goal2 = random.uniform(0.5,1),random.uniform(-0.5,-a1)
+        goal, goal2 = random.uniform(0.5,1),random.uniform(-0.5,-1)
         
         sender = ctrnn.CTRNN(genome)
         receiver = ctrnn.CTRNN(genome)
