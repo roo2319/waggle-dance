@@ -41,7 +41,16 @@ for _ in range(5):
     displacement = [[],[],[]]
     rsens = [[],[],[]]
     ssens = [[],[],[]]
-    sim = line_location.line_location(senderPos=sp,receiverPos=rp)
+    hi = random.uniform(0.5,1)
+    lo = random.uniform(0.5,hi)
+    if random.random() < 0.5:
+        goals = lo,-hi
+    else:
+        goals = hi,-lo
+        
+    goal, goal2 = goals
+
+    sim = line_location.line_location(senderPos=sp,receiverPos=rp,goal=goal,goal2=goal2)
     goal = sim.truegoal
     time_const = line_location.line_location.timestep
 

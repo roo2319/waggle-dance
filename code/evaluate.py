@@ -25,7 +25,7 @@ def runtrial(c, task):
     sp, rp = task
     hi = random.uniform(0.5,1)
     lo = random.uniform(0.5,hi)
-    if random.random() < 0.75:
+    if random.random() < 0.5:
         goals = lo,-hi
     else:
         goals = hi,-lo
