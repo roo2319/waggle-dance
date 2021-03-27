@@ -44,12 +44,13 @@ def fitness(genome,rs):
 
     # for sp, rp, goal, goal2 in [(0,0, random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
     for sp, rp in [(0,0) for _ in range(ntrials)]:
-        goals = random.uniform(0.5,1),random.uniform(0.5,1)
-        if random.random() < 0.66:
-            goals = sorted(goals)
+        hi = random.uniform(0.5,1)
+        lo = random.uniform(0.5,hi)
+        if random.random() < 0.75:
+            goals = lo,-hi
         else:
-            goals = sorted(goals,reverse=True)
-        goals[1] = -goals[1]
+            goals = hi,-lo
+        
         goal, goal2 = goals
         
         sender = ctrnn.CTRNN(genome)
