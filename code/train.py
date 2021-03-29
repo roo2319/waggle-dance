@@ -53,15 +53,15 @@ def fitness(genome,rs):
         
         goal, goal2 = goals
         
-        sender = ctrnn.CTRNN(genome)
-        receiver = ctrnn.CTRNN(genome)
+        sender = ctrnn.CTRNN(genome,time_const)
+        receiver = ctrnn.CTRNN(genome,time_const)
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal, goal2=goal2)
 
         # Run the given simulation for up to num_steps time steps.
         fitness = 0.0
         while sim.t < simulation_seconds:
-            senderOut   = sender.eulerStep(sim.getState(True),time_const)[0]
-            receiverOut = receiver.eulerStep(sim.getState(False),time_const)[0]
+            senderOut   = sender.eulerStep(sim.getState(True))[0]
+            receiverOut = receiver.eulerStep(sim.getState(False))[0]
 
             sim.step(senderOut,receiverOut)
 

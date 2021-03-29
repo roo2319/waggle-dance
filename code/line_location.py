@@ -66,7 +66,7 @@ class line_location():
         receiverPos (float) : The starting location of the receiver
         goal (float) : The location of the endpoint. 
     """
-    timestep = 1
+    timestep = 0.2
 
     def __init__(self,senderPos=None,receiverPos=None,goal=None,goal2=None):
         if goal == None:
