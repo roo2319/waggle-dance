@@ -24,7 +24,7 @@ elitism = settings.get("elitism",0)
 generations = settings.get("generations", 1000)
 ntrials = settings.get("ntrials",20)
 population_size = settings.get("population_size",96)
-simulation_seconds = settings.get("simulation_seconds",3)
+simulation_seconds = settings.get("simulation_seconds",300)
 
 evolve.mutationRate = settings.get("mutationRate",0.447)
 evolve.centerCrossing = settings.get("centerCrossing", False)
@@ -32,8 +32,9 @@ line_location.motorFunction = line_location.motors[settings.get("motor","clipped
 
 
 aggregate_fitness = evolve.rank_reduce
+bias = 3
 # aggregate_fitness = min
-maxfitness = aggregate_fitness(([3]*(ntrials//2)) + ([1]*(ntrials//2)))
+maxfitness = aggregate_fitness(([bias]*(ntrials//2)) + ([1]*(ntrials//2)))
 time_const = line_location.line_location.timestep
 
 
@@ -72,7 +73,7 @@ def fitness(genome,rs):
 
 
     for i in range(ntrials//2):
-        fitnesses[i] *= 3
+        fitnesses[i] *= bias
 
     return aggregate_fitness(fitnesses)/maxfitness
 
