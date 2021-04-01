@@ -151,14 +151,22 @@ class line_location():
         #     self.ctime += 1 # Remember this will be counted twice
         if isSender:
             targetSensor = (self.senderPos - self.goal)
+            otargetSensor = (self.senderPos - self.goal2)
+
             distanceSensor = (self.senderPos - self.receiverPos)
-            return [distanceSensor,self.senderPos,targetSensor]
+            # return [distanceSensor,self.senderPos,targetSensor]
+            return [otargetSensor,self.senderPos,targetSensor]
+            # return [self.goal,self.receiverPos,self.goal2]
             # return [self.receiverPos,distanceSensor,targetSensor]
 
         else:
             targetSensor = (self.receiverPos - self.goal2)
+            otargetSensor = (self.receiverPos - self.goal)
+
             distanceSensor = (self.receiverPos - self.senderPos)
-            return [distanceSensor,self.receiverPos,targetSensor]
+            # return [distanceSensor,self.receiverPos,targetSensor]
+            return [otargetSensor,self.senderPos,targetSensor]
+            # return [self.goal,self.receiverPos,self.goal2]
             # return [self.senderPos,distanceSensor,targetSensor]
 
 
@@ -191,8 +199,8 @@ class line_location():
         Return:
             The fitness of the simulation (float)
         """
-        # if abs(self.receiverPos - self.senderPos) > 1:
-        #     return 0
+        if abs(self.receiverPos - self.senderPos) > 1:
+            return 0
         return (max(1 - abs(self.receiverPos-self.truegoal),0) +  max(1 - abs(self.senderPos-self.truegoal),0))/2
         # if self.truegoal == self.goal:
         #     return (max(1 - abs(self.receiverPos - self.goal),0) 
