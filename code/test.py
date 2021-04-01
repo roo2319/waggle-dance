@@ -25,6 +25,7 @@ with open(sys.argv[2], 'rb') as f:
 print('Loaded genome:')
 print(c)
 
+ntrials = 6
 
 
 positions = (0,0)
@@ -35,15 +36,14 @@ print("Initial conditions:")
 print("   Sender = {0:.4f}".format(sp))
 print(" Receiver = {0:.4f}".format(rp))
 print()
-fig, ax = plt.subplots(3,5)
-i = 0
-for _ in range(5):
+fig, ax = plt.subplots(3,ntrials)
+for i in range(ntrials):
     displacement = [[],[],[]]
     rsens = [[],[],[]]
     ssens = [[],[],[]]
     hi = random.uniform(0.5,1)
     lo = random.uniform(0.5,hi)
-    if random.random() < 0.5:
+    if i < ntrials//2:
         goals = lo,-hi
     else:
         goals = hi,-lo
@@ -114,8 +114,6 @@ for _ in range(5):
     ax[2][i].set_title(f"Sender Sensors")
     ax[2][i].legend()
     ax[2][i].set_ylim([-1,1])
-
-    i+=1
         # print(sim.getAsciiState())
 
 
