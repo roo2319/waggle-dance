@@ -66,7 +66,7 @@ class line_location():
         receiverPos (float) : The starting location of the receiver
         goal (float) : The location of the endpoint. 
     """
-    timestep = 0.2
+    timestep = 0.5
 
     def __init__(self,senderPos=None,receiverPos=None,goal=None,goal2=None):
         if goal == None:
@@ -191,8 +191,8 @@ class line_location():
         Return:
             The fitness of the simulation (float)
         """
-        if abs(self.receiverPos - self.senderPos) > 1:
-            return 0
+        # if abs(self.receiverPos - self.senderPos) > 1:
+        #     return 0
         return (max(1 - abs(self.receiverPos-self.truegoal),0) +  max(1 - abs(self.senderPos-self.truegoal),0))/2
         # if self.truegoal == self.goal:
         #     return (max(1 - abs(self.receiverPos - self.goal),0) 
