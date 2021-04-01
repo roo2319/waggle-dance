@@ -46,7 +46,7 @@ def fitness(genome,rs):
     for sp, rp in [(0,0) for _ in range(ntrials)]:
         hi = random.uniform(0.5,1)
         lo = random.uniform(0.5,hi)
-        if random.random() < 0.75:
+        if random.random() < 0.7:
             goals = lo,-hi
         else:
             goals = hi,-lo
