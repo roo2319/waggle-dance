@@ -32,9 +32,11 @@ line_location.motorFunction = line_location.motors[settings.get("motor","clipped
 
 
 aggregate_fitness = evolve.rank_reduce
-bias = 3
+bias = 1
 # aggregate_fitness = min
 maxfitness = aggregate_fitness(([bias]*(ntrials//2)) + ([1]*(ntrials//2)))
+maxhalffitness = aggregate_fitness([1]*(ntrials//2))
+
 time_const = line_location.line_location.timestep
 
 
@@ -45,8 +47,8 @@ def fitness(genome,rs):
 
     # for sp, rp, goal, goal2 in [(0,0, random.uniform(0.5,1),random.uniform(-0.5,-1)) for _ in range(ntrials)]:
     for sp, rp in [(0,0) for _ in range(ntrials)]:
-        hi = random.uniform(0.5,1)
-        lo = random.uniform(0.5,hi)
+        hi = random.uniform(0.7,1)
+        lo = random.uniform(0.5,hi-0.2)
         if len(fitnesses) < ntrials//2:
             goals = lo,-hi
         else:
@@ -74,6 +76,8 @@ def fitness(genome,rs):
 
     for i in range(ntrials//2):
         fitnesses[i] *= bias
+
+    return min(aggregate_fitness(fitnesses[:ntrials//2])/maxhalffitness,aggregate_fitness(fitnesses[ntrials//2:])/maxhalffitness)
 
     return aggregate_fitness(fitnesses)/maxfitness
 

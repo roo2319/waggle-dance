@@ -23,8 +23,8 @@ line_location.motorFunction = line_location.motors[settings.get("motor","clipped
 
 def runtrial(c, task):
     sp, rp = task
-    hi = random.uniform(0.5,1)
-    lo = random.uniform(0.5,hi)
+    hi = random.uniform(0.7,1)
+    lo = random.uniform(0.5,hi-0.2)
     if random.random() < 0.5:
         goals = lo,-hi
     else:
