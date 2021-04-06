@@ -91,9 +91,16 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
         generation = 0
         mcount = 0
         mcount2 = 0
+        best = None 
+        best_fit = -1
         while generation < max_gen:
             rs = random.random()
             pop = evolve.assess(pop, pool, fitness,rs)
+
+            if pop[0].fitness > best_fit:
+                best = pop[0]
+                best_fit = pop[0].fitness
+
             if generation % 20 == 0 and file != None:
                 evolve.log_fitness(pop, generation, mcount2, None)
                 print(f"Batch Time {time.time()-batch_start}")
@@ -110,7 +117,7 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
             mcount += c
             mcount2 += c
                 
-    return pop[0]
+    return pop[0],best
 
 
 
@@ -121,8 +128,12 @@ def main():
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
         print(f"Logs are in {path}")
-        best = train(population_size,generations,file=f)
+        last,best = train(population_size,generations,file=f)
+        print(f"Last fitness: {last.fitness}")
         print(f"Best fitness: {best.fitness}")
+
+        with open("models/last_genome.pkl",'wb') as g:
+            pickle.dump(last.genome,g)
         with open("models/best_genome.pkl",'wb') as g:
             pickle.dump(best.genome,g)
     print(f"Finished training in {time.time() - start} seconds")
