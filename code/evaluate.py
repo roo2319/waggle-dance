@@ -27,8 +27,10 @@ def runtrial(c, task):
     lo = random.uniform(0.5,hi-0.2)
     if random.random() < 0.5:
         goals = lo,-hi
+        dir = -1
     else:
         goals = hi,-lo
+        dir = 1
         
     goal, goal2 = goals
 
@@ -58,9 +60,9 @@ def runtrial(c, task):
     sdistance = abs(sim.truegoal - sim.senderPos)
 
     if rdistance < 0.1 and sdistance < 0.1:
-        return (1,rdistance,sdistance,sim.touches,sim.ctime)
+        return (1,rdistance,sdistance,sim.touches,sim.ctime,dir)
     else:
-        return (0,rdistance,sdistance,sim.touches,sim.ctime)
+        return (0,rdistance,sdistance,sim.touches,sim.ctime,dir)
 
 
 def main():
@@ -77,12 +79,17 @@ def main():
         results = pool.starmap(runtrial,tasks)
 
     successes  = [result[0] for result in results]
+    lsuccesses  = [result[0] for result in results if result[5] == -1]
+    rsuccesses  = [result[0] for result in results if result[5] ==  1]
+
+
     rdistances  = [result[1] for result in results]
     sdistances = [result[2] for result in results]
     nudges     = [result[3] for result in results]
     ctime      = [result[4] for result in results]
 
-    print(f"{sum(successes)} ({100*sum(successes)/ntrials}%) successes across {ntrials} trials")
+    print(f"{sum(successes)} ({100*sum(successes)/ntrials}%) successes across {ntrials} trials,  {100*sum(lsuccesses)/len(lsuccesses):.2f}% vs {100*sum(rsuccesses)/len(rsuccesses):.2f}%")
+
     print(f"Mean absolute rdistance from goal: {mean(rdistances):.4f} (Standard deviation {stdev(rdistances):.4f})")
     print(f"Mean absolute sdistance from goal: {mean(sdistances):.4f} (Standard deviation {stdev(sdistances):.4f})")
     print(f"Mean Nudges: {mean(nudges)} ")
