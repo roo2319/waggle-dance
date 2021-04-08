@@ -147,27 +147,26 @@ def rank_roulette_select(pop,size=None):
     pop = random.choices(pop,reversed(range(1,len(pop)+1)),k=size)
     return pop
 
-def sus(pop,size=None):
+def sus(pop):
     # Bakers stochastic universal sampling
     MaxExpOffspring = 1.1
-    if size == None:
-        size = len(pop)
+    size = len(pop)
     # Rerank using bakers linear ranking method
     for count, i in enumerate(pop):
-        i.rfitness = (MaxExpOffspring + (2.0 - 2.0*MaxExpOffspring)*((count)/(len(pop)-1)))/(size)
+        i.rfitness = (MaxExpOffspring + (2.0 - 2.0*MaxExpOffspring)*((count)/(size-1)))/(size)
 
     rand = random.random() 
-    sum = 0
+    total = 0
     i = -1
     newpop = []
     while len(newpop) < size:
-        if rand < sum:
+        if rand < total:
             # if you don't create a new citizen bad things happen
             newpop.append(Citizen(pop[i].genome,pop[i].fitness,pop[i].age))
             rand += 1
             continue
         i += 1
-        sum += size * pop[i].rfitness
+        total += size * pop[i].rfitness
     return newpop
 
     
