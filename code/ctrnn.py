@@ -41,17 +41,17 @@ class CTRNN():
         Return:
             The outputs of the network at this timestep
         """
-        # paddedInputs = np.zeros(self.hiddenCount)
-        # 2.45 func overhead
-        self.paddedInputs[:self.inputsCount] = externalInputs #3.87, 1.42s <- This line saves an allocation
+        self.paddedInputs[:self.inputsCount] = externalInputs
+
         # First we calculate the change for each hidden node based on external inputs
-        delta = np.multiply(self.paddedInputs, self.inputWeights) + np.dot(self.outputs, self.weights)  # 9.94s, 5.9s
+        delta = np.multiply(self.paddedInputs, self.inputWeights) + np.dot(self.outputs, self.weights) 
+
         # Then we update the state of each hidden node
-        
-        self.states += np.multiply(self.sTaus, (delta - self.states)) #15.28
-        self.outputs = expit((self.states + self.biases)) #18.0s
+        self.states += np.multiply(self.sTaus, (delta - self.states)) 
+
         # We can now calculate the external output. 
-        return self.outputs[:self.outputCount] #20.17
+        self.outputs = expit((self.states + self.biases)) 
+        return self.outputs[:self.outputCount] 
     
     def reset(self):
         """
