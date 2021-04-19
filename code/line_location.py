@@ -19,15 +19,6 @@ def quickClip(minV,maxV,value):
     return max(minV,min(maxV,value))
 
 def discreteMotor(val):
-    """
-    A motor function that assign -0.01, 0 or 0.01 based on a threshold
-
-    Parameters: 
-        val : The value to be transformed
-
-    Return:
-        -0.01, 0 or 0.01
-    """
     if val < 0.25:
         return -0.01
     elif val > 0.75: 
@@ -51,6 +42,9 @@ def tanhMotor(val):
     return (tanh(val)-0.5)/50
 
 def camposMotor(val):
+    """
+    This is the original motor used by Jorge Campos
+    """
     return (2 * (val - 0.5))  * 0.01 * line_location.timestep
 
 motors = {"discreteMotor":discreteMotor, "clippedMotor1" : clippedMotor1, "clippedMotor2" : clippedMotor2, "clippedMotor3" : clippedMotor3, "sigmoidMotor" : sigmoidMotor, "tanhMotor" : tanhMotor, "camposMotor":camposMotor}
@@ -90,7 +84,7 @@ class line_location():
 
     def step(self, senderOutput=0, receieverOutput=0):
         """
-        The step function, responsible for moving the game ahead a single timestep.
+        The step function, responsible for moving the simulation ahead a single timestep.
         This function will update positions of agents as well as increase the value for 
         time.
 
