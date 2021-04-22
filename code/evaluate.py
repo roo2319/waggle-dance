@@ -23,14 +23,16 @@ line_location.motorFunction = line_location.motors[settings.get("motor","clipped
 
 def runtrial(c, task):
     sp, rp = task
-    hi = random.uniform(0.7,1)
-    lo = random.uniform(0.5,hi-0.2)
+    # hi = random.uniform(0.7,1)
+    # lo = random.uniform(0.5,hi-0.2)
+    hi = random.uniform(0.5,1)
+    lo = random.uniform(0.5,hi)
     if random.random() < 0.5:
         goals = lo,-hi
-        dir = -1
+        direction = -1
     else:
         goals = hi,-lo
-        dir = 1
+        direction = 1
         
     goal, goal2 = goals
 
@@ -58,12 +60,17 @@ def runtrial(c, task):
         # print(sim.getAsciiState())
     rdistance = abs(sim.truegoal - sim.receiverPos)
     sdistance = abs(sim.truegoal - sim.senderPos)
+    # rdistance = abs(sim.goal - sim.receiverPos)
+    # sdistance = abs(sim.goal2 - sim.senderPos)
 
     if rdistance < 0.1 and sdistance < 0.1:
-        return (1,rdistance,sdistance,sim.touches,sim.ctime,dir)
+        return (1,rdistance,sdistance,sim.touches,sim.ctime,direction)
     else:
-        return (0,rdistance,sdistance,sim.touches,sim.ctime,dir)
-
+        return (0,rdistance,sdistance,sim.touches,sim.ctime,direction)
+    # if sim.fitness() > 0.90:
+    #     return (1,rdistance,sdistance,sim.touches,sim.ctime,direction)
+    # else:
+    #     return (0,rdistance,sdistance,sim.touches,sim.ctime,direction)
 
 def main():
     with open(sys.argv[2], 'rb') as f:
