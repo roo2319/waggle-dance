@@ -60,7 +60,7 @@ class line_location():
         receiverPos (float) : The starting location of the receiver
         goal (float) : The location of the endpoint. 
     """
-    timestep = 0.5
+    timestep = 1
 
     def __init__(self,senderPos=None,receiverPos=None,goal=None,goal2=None):
         if goal == None:
@@ -135,29 +135,19 @@ class line_location():
             A list(float) containing the Contact sensor, Self Position sensor
             and Target Sensor / Constant Value Sensor
         """
-        # contactSensor = 1 if abs(self.senderPos - self.receiverPos) <= 0.4 else 0
-        # if self.prevcon != contactSensor:
-        #     self.prevcon = contactSensor
-        #     if self.prevcon:
-        #         self.touches += 1
-        
-        # if contactSensor and self.t > 150:
-        #     self.ctime += 1 # Remember this will be counted twice
         if isSender:
-            targetSensor = (self.senderPos - self.goal)
-            otargetSensor = (self.senderPos - self.goal2)
+            targetSensor = (self.goal - self.senderPos)
 
-            distanceSensor = (self.senderPos - self.receiverPos)
+            distanceSensor = (self.receiverPos - self.senderPos)
             return [distanceSensor,self.senderPos,targetSensor]
             # return [otargetSensor,self.senderPos,targetSensor]
             # return [abs(self.goal),self.senderPos,abs(self.goal2)]
             # return [self.receiverPos,distanceSensor,targetSensor]
 
         else:
-            targetSensor = (self.receiverPos - self.goal2)
-            otargetSensor = (self.receiverPos - self.goal)
+            targetSensor = (self.goal2 - self.receiverPos)
 
-            distanceSensor = (self.receiverPos - self.senderPos)
+            distanceSensor = (self.senderPos - self.receiverPos)
             return [distanceSensor,self.receiverPos,targetSensor]
             # return [otargetSensor,self.receiverPos,targetSensor]
             # return [abs(self.goal),self.receiverPos,abs(self.goal2)]
@@ -198,9 +188,9 @@ class line_location():
         # return (max(1 - abs(self.receiverPos-self.truegoal),0) +  max(1 - abs(self.senderPos-self.truegoal),0))/2
         return (max(1 - abs(self.receiverPos-self.truegoal) - abs(self.senderPos-self.truegoal) ,0))
         # if self.truegoal == self.goal:
-        #     return (max(1 - abs(self.receiverPos - self.goal),0) 
+        #     return max(1 - abs(self.receiverPos - self.goal),0) 
         # else:
-        #     return (max(1 - abs(self.senderPos - self.goal2),0) 
+        #     return max(1 - abs(self.senderPos - self.goal2),0) 
         
 # Testing, 1 second movement
 def main():
