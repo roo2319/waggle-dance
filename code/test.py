@@ -41,8 +41,8 @@ for i in range(ntrials):
     displacement = [[],[],[]]
     rsens = [[],[],[]]
     ssens = [[],[],[]]
-    hi = random.uniform(0.7,1)
-    lo = random.uniform(0.5,hi-0.2)
+    hi = random.uniform(0.5,1)
+    lo = random.uniform(0.5,hi)
     if i < ntrials//2:
         goals = lo,-hi
     else:

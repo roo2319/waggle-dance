@@ -186,11 +186,11 @@ class line_location():
         # if abs(self.receiverPos - self.senderPos) > 0.2:
         #     return 0
         # return (max(1 - abs(self.receiverPos-self.truegoal),0) +  max(1 - abs(self.senderPos-self.truegoal),0))/2
-        return (max(1 - abs(self.receiverPos-self.truegoal) - abs(self.senderPos-self.truegoal) ,0))
-        # if self.truegoal == self.goal:
-        #     return max(1 - abs(self.receiverPos - self.goal),0) 
-        # else:
-        #     return max(1 - abs(self.senderPos - self.goal2),0) 
+        # return (max(1 - abs(self.receiverPos-self.truegoal) - abs(self.senderPos-self.truegoal) ,0))
+        if self.truegoal == self.goal:
+            return max(1 - abs(self.receiverPos - self.goal),0) 
+        else:
+            return max(1 - abs(self.senderPos - self.goal2),0) 
         
 # Testing, 1 second movement
 def main():

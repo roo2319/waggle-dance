@@ -58,19 +58,19 @@ def runtrial(c, task):
 
 
         # print(sim.getAsciiState())
-    rdistance = abs(sim.truegoal - sim.receiverPos)
-    sdistance = abs(sim.truegoal - sim.senderPos)
-    # rdistance = abs(sim.goal - sim.receiverPos)
-    # sdistance = abs(sim.goal2 - sim.senderPos)
+    # rdistance = abs(sim.truegoal - sim.receiverPos)
+    # sdistance = abs(sim.truegoal - sim.senderPos)
+    rdistance = abs(sim.goal - sim.receiverPos)
+    sdistance = abs(sim.goal2 - sim.senderPos)
 
-    if rdistance < 0.1 and sdistance < 0.1:
+    # if rdistance < 0.1 and sdistance < 0.1:
+        # return (1,rdistance,sdistance,sim.touches,sim.ctime,direction)
+    # else:
+        # return (0,rdistance,sdistance,sim.touches,sim.ctime,direction)
+    if sim.fitness() > 0.90:
         return (1,rdistance,sdistance,sim.touches,sim.ctime,direction)
     else:
         return (0,rdistance,sdistance,sim.touches,sim.ctime,direction)
-    # if sim.fitness() > 0.90:
-    #     return (1,rdistance,sdistance,sim.touches,sim.ctime,direction)
-    # else:
-    #     return (0,rdistance,sdistance,sim.touches,sim.ctime,direction)
 
 def main():
     with open(sys.argv[2], 'rb') as f:
