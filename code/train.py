@@ -49,8 +49,8 @@ def fitness(genome,rs):
     for sp, rp in [(0,0) for _ in range(ntrials)]:
         # hi = random.uniform(0.7,1)
         # lo = random.uniform(0.5,hi-0.2)
-        hi = random.uniform(0.5,1)
-        lo = random.uniform(0.5,hi)
+        hi = random.uniform(0.65,1)
+        lo = random.uniform(0.5,hi-0.15)
         if len(fitnesses) < ntrials//2:
             goals = lo,-hi
         else:

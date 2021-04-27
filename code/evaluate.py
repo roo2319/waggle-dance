@@ -25,8 +25,8 @@ def runtrial(c, task):
     sp, rp = task
     # hi = random.uniform(0.7,1)
     # lo = random.uniform(0.5,hi-0.2)
-    hi = random.uniform(0.5,1)
-    lo = random.uniform(0.5,hi)
+    hi = random.uniform(0.65,1)
+    lo = random.uniform(0.5,hi-0.15)
     if random.random() < 0.5:
         goals = lo,-hi
         direction = -1
@@ -58,10 +58,10 @@ def runtrial(c, task):
 
 
         # print(sim.getAsciiState())
-    # rdistance = abs(sim.truegoal - sim.receiverPos)
-    # sdistance = abs(sim.truegoal - sim.senderPos)
-    rdistance = abs(sim.goal - sim.receiverPos)
-    sdistance = abs(sim.goal2 - sim.senderPos)
+    rdistance = abs(sim.truegoal - sim.receiverPos)
+    sdistance = abs(sim.truegoal - sim.senderPos)
+    # rdistance = abs(sim.goal - sim.receiverPos)
+    # sdistance = abs(sim.goal2 - sim.senderPos)
 
     # if rdistance < 0.1 and sdistance < 0.1:
         # return (1,rdistance,sdistance,sim.touches,sim.ctime,direction)
