@@ -34,9 +34,9 @@ def runtrial(c, goal):
     count = 0 
     # print(goal,lb,ub)
     for goal2 in np.arange(lb,ub,step): #make me the whole range of other values
-        if abs(goal + goal2) < 15:
-            fit.append(0)
-            continue
+        # if abs(goal + goal2) < 15:
+        #     fit.append(0)
+        #     continue
 
         g = goal/100
         g2=goal2/100
@@ -62,8 +62,11 @@ def runtrial(c, goal):
     
     
             # print(sim.getAsciiState())
-        fit.append(1 if sim.fitness() > 0.9 else 0.5)
-        # fit.append(sim.fitness())
+        # rdistance = abs(sim.truegoal - sim.receiverPos)
+        # sdistance = abs(sim.truegoal - sim.senderPos)
+        # fit.append(1 if rdistance < 0.1 and sdistance < 0.1 else 0.5)
+        # fit.append(1 if sim.fitness() > 0.9 else 0.5)
+        fit.append(sim.fitness())
 
     return (np.arange(lb,ub,step),fit)
        
@@ -83,7 +86,10 @@ def main():
 
     yt = [goal/100 for goal in np.arange(50,100,1)]
     xt=([-goal/100 for goal in np.arange(50,100,1)])
-    ax = sns.heatmap(fit,xticklabels=xt,yticklabels=yt)
+    # c = sns.color_palette("viridis", as_cmap=True)
+    c = sns.color_palette("vlag", as_cmap=True)
+
+    ax = sns.heatmap(fit,xticklabels=xt,yticklabels=yt,cmap=c)
     ax.set_xticks(ax.get_xticks()[::10])
     ax.set_xticklabels(xt[::10])
     ax.set_xlabel("Negative Goal")
