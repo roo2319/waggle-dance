@@ -80,8 +80,9 @@ def fitness(genome,rs):
         fitnesses[i] *= bias
 
     return min(aggregate_fitness(fitnesses[:ntrials//2])/maxhalffitness,aggregate_fitness(fitnesses[ntrials//2:])/maxhalffitness)
+    # return (aggregate_fitness(fitnesses[:ntrials//2])/maxhalffitness) * (aggregate_fitness(fitnesses[ntrials//2:])/maxhalffitness)
 
-    return aggregate_fitness(fitnesses)/maxfitness
+    # return aggregate_fitness(fitnesses)/maxfitness
 
 
 def train(pop_size=100, max_gen=1, write_every=1, file=None):
