@@ -1,1 +1,1 @@
-{"simulation_seconds": 300, "elitism": 0, "ntrials": 20, "aggregate_fitness": "rank_reduce", "mutationRate":0.447, "initial_size":50,"population_size": 50, "generations": 2000, "motor" : "camposMotor","centerCrossing" : false}
+{"simulation_seconds": 300, "elitism": 0, "ntrials": 20, "aggregate_fitness": "rank_reduce", "mutationRate":0.447, "initial_size":50,"population_size": 50, "generations": 5000, "motor" : "camposMotor","centerCrossing" : false}
