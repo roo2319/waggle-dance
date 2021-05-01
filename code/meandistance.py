@@ -5,6 +5,7 @@ import random
 import sys
 from multiprocessing import Pool, Value, cpu_count
 from statistics import mean, stdev
+from matplotlib.collections import LineCollection
 import seaborn as sns
 
 import matplotlib.pyplot as plt
@@ -25,7 +26,7 @@ simulation_seconds = settings.get("simulation_seconds",3)
 line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
 
 def runtrial(c, goal):
-    ub = -101
+    ub = -100
     lb = -50
     step = -1
 
@@ -97,6 +98,35 @@ def main():
     ax.set_yticks(ax.get_yticks()[::5])
     ax.set_yticklabels(yt[::5])
     ax.invert_yaxis()
+
+    # high bound
+    x = 0
+    y = 15
+    xs = [x]
+    ys = [y]
+    while y < 50:
+        x += 1
+        xs.append(x)
+        ys.append(y)
+        y += 1
+        xs.append(x)
+        ys.append(y)
+    ax.plot(xs,ys,c='r')
+
+    # low bound
+    x = 15
+    y = 0
+    xs = [x]
+    ys = [y]
+    while x < 50:
+        y += 1
+        xs.append(x)
+        ys.append(y)
+        x += 1
+        xs.append(x)
+        ys.append(y)
+    ax.plot(xs,ys,c='r')
+
     plt.show()
 
     # fig, ax = plt.subplots(1,2)
