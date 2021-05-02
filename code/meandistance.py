@@ -38,6 +38,9 @@ def runtrial(c, goal):
         # if abs(goal + goal2) < 15:
         #     fit.append(0)
         #     continue
+        if goal == -goal2:
+            fit.append(np.nan)
+            continue
 
         g = goal/100
         g2=goal2/100
@@ -89,6 +92,7 @@ def main():
     xt=([-goal/100 for goal in np.arange(50,100,1)])
     # c = sns.color_palette("viridis", as_cmap=True)
     c = sns.color_palette("vlag", as_cmap=True)
+    c.set_bad("black")
 
     ax = sns.heatmap(fit,xticklabels=xt,yticklabels=yt,cmap=c)
     ax.set_xticks(ax.get_xticks()[::10])

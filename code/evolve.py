@@ -126,6 +126,21 @@ def initialise(pop_size):
 
     return pop
 
+def strong_init(pop_size,pool,fitness,rs):
+    pop = []
+    n = 0
+    while len(pop)<pop_size:
+        candidates = [Citizen() for _ in range(pop_size*10)]
+        candidates = assess(candidates,pool,fitness,rs)
+        nonzero = [cand for cand in candidates if cand.fitness > 0]
+        pop.extend(nonzero)
+        n += pop_size*10
+
+
+    return pop[:pop_size],n
+
+
+
 def selection(pop,elitism=0,size=None):
     elites = pop[:elitism]
     sel = rank_roulette_select(pop[elitism:],size)

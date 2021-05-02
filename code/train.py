@@ -90,7 +90,9 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
     with Pool(processes=cpu_count()) as pool:
         rs = random.random()
         batch_start = time.time()
-        pop = evolve.initialise(pop_size)
+        # pop = evolve.initialise(pop_size)
+        pop,n = evolve.strong_init(pop_size,pool,fitness,rs)
+        print(f"Strong init finished in {n} choices")
         generation = 0
         mcount = 0
         mcount2 = 0
