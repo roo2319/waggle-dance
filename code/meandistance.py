@@ -24,20 +24,20 @@ with open(sys.argv[1],'r') as config:
     settings = json.load(config)
 simulation_seconds = settings.get("simulation_seconds",3)
 line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
+ub = 125
+lb = 50
 
 def runtrial(c, goal):
-    ub = -100
-    lb = -50
     step = -1
 
     fit = []
     endpos = []
     count = 0 
     # print(goal,lb,ub)
-    for goal2 in np.arange(lb,ub,step): #make me the whole range of other values
+    for goal2 in np.arange(-lb,-ub,step): #make me the whole range of other values
         # if abs(goal + goal2) < 15:
-        #     fit.append(0)
-        #     continue
+            # fit.append(np.nan)
+            # continue
         if goal == -goal2:
             fit.append(np.nan)
             continue
@@ -72,7 +72,7 @@ def runtrial(c, goal):
         # fit.append(1 if sim.fitness() > 0.9 else 0.5)
         fit.append(sim.fitness())
 
-    return (np.arange(lb,ub,step),fit)
+    return fit
        
 def main():
     with open(sys.argv[2], 'rb') as f:
@@ -80,21 +80,19 @@ def main():
 
     print(c)
 
+
     with Pool(processes=cpu_count()) as pool:
-        tasks = [(c,goal) for goal in np.arange(50,100,1)]
-        results = pool.starmap(runtrial,tasks)
+        tasks = [(c,goal) for goal in np.arange(lb,ub,1)]
+        fit = pool.starmap(runtrial,tasks)
 
-    goals = [result[0] for result in results]
-    fit = [result[1] for result in results]
-    
-
-    yt = [goal/100 for goal in np.arange(50,100,1)]
-    xt=([-goal/100 for goal in np.arange(50,100,1)])
+    print(np.nanmin(fit,))
+    yt = [goal/100 for goal in np.arange(lb,ub,1)]
+    xt=[-goal/100 for goal in np.arange(lb,ub,1)]
     # c = sns.color_palette("viridis", as_cmap=True)
     c = sns.color_palette("vlag", as_cmap=True)
     c.set_bad("black")
 
-    ax = sns.heatmap(fit,xticklabels=xt,yticklabels=yt,cmap=c)
+    ax = sns.heatmap(fit,xticklabels=xt,yticklabels=yt,cmap=c,vmin=0,vmax=1)
     ax.set_xticks(ax.get_xticks()[::10])
     ax.set_xticklabels(xt[::10])
     ax.set_xlabel("Negative Goal")
@@ -131,6 +129,8 @@ def main():
         ys.append(y)
     ax.plot(xs,ys,c='r')
 
+    ax.plot(range(0,36),[50]*36,c='r')
+    ax.plot([50]*36,range(0,36),c='r')
     plt.show()
 
     # fig, ax = plt.subplots(1,2)
