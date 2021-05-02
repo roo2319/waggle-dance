@@ -32,10 +32,6 @@ positions = (0,0)
 # positions = (0.3,0.05)
 
 sp,rp = positions
-print("Initial conditions:")
-print("   Sender = {0:.4f}".format(sp))
-print(" Receiver = {0:.4f}".format(rp))
-print()
 fig, ax = plt.subplots(3,ntrials)
 for i in range(ntrials):
     displacement = [[],[],[]]
@@ -91,42 +87,32 @@ for i in range(ntrials):
             rsens[j].append(receiverstate[j])
             ssens[j].append(senderstate[j])
 
-    ax[0][i].plot(displacement[0],displacement[1],label="receiver")
-    ax[0][i].plot(displacement[0],displacement[2],label="sender")
-    ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),label="goal")
-    ax[0][i].plot(displacement[0],[sim.falsegoal]*len(displacement[0]),label="bad-goal")
+    ax[0][i].plot(displacement[0],displacement[1],color="tab:blue",label="A2")
+    ax[0][i].plot(displacement[0],displacement[2],color="tab:orange",label="A1")
+    ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),color="tab:green",label="goal")
+    ax[0][i].plot(displacement[0],[sim.falsegoal]*len(displacement[0]),color="tab:red",label="bad-goal")
 
-    ax[0][i].set_title(f"Goal = {goal}\nSender = {sim.senderPos:.2f},{sim.goal:.2f}\nReceiver = {sim.receiverPos:.2f},{sim.goal2:.2f}\nFitness = {sim.fitness():.2f}")
+    ax[0][i].set_title(f"Goal = {goal}\nA1 End Pos = {sim.senderPos:.2f},{sim.goal:.2f}\nA2 End Pos = {sim.receiverPos:.2f},{sim.goal2:.2f}\nFitness = {sim.fitness():.2f}")
     ax[0][i].legend()
     ax[0][i].set_ylim([-1,1])
-    ax[1][i].plot(displacement[0],rsens[0],label="Contact")
-    ax[1][i].plot(displacement[0],rsens[1],label="Self Position")
-    ax[1][i].plot(displacement[0],rsens[2],label="Goal Distance")
 
-    # ax[1][i].plot(displacement[0],rsens[2],label="Constant Value")
-    ax[1][i].set_title(f"Receiver Sensors")
+    ax[1][i].plot(displacement[0],ssens[0],color="tab:olive",label="Contact")
+    ax[1][i].plot(displacement[0],ssens[1],color="tab:purple",label="Self Position")
+    ax[1][i].plot(displacement[0],ssens[2],color="tab:cyan",label="Goal Distance")
+    ax[1][i].set_title(f"A1 Sensors")
     ax[1][i].legend()
     ax[1][i].set_ylim([-1,1])
 
-    ax[2][i].plot(displacement[0],ssens[0],label="Contact")
-    ax[2][i].plot(displacement[0],ssens[1],label="Self Position")
-    ax[2][i].plot(displacement[0],ssens[2],label="Goal Distance")
-    ax[2][i].set_title(f"Sender Sensors")
+    ax[2][i].plot(displacement[0],rsens[0],color="tab:olive",label="Contact")
+    ax[2][i].plot(displacement[0],rsens[1],color="tab:purple",label="Self Position")
+    ax[2][i].plot(displacement[0],rsens[2],color="tab:cyan",label="Goal Distance")
+    ax[2][i].set_title(f"A2 Sensors")
     ax[2][i].legend()
     ax[2][i].set_ylim([-1,1])
+
+
         # print(sim.getAsciiState())
 
 
-
-
-    print("Final conditions:")
-    print("   Sender = {0:.4f}".format(sim.senderPos))
-    print(" Receiver = {0:.4f}".format(sim.receiverPos))
-    print("     Goal = {0:.4f}".format(goal))
-    print(f"  Nudges = {sim.touches}")
-    print(f"  C time = {sim.ctime}")
-    print(f" fitness = {sim.fitness()}")
-    print()
-    print(f"Max {max(vals)},Min {min(vals)}, Average {sum(vals)/len(vals)}")
 
 plt.show()
