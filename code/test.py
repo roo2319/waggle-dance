@@ -33,16 +33,17 @@ positions = (0,0)
 
 sp,rp = positions
 fig, ax = plt.subplots(3,ntrials)
-for i in range(ntrials):
+# for i in range(ntrials):
+for i,(hi,lo) in enumerate([(0.9,0.7),(0.8,0.6),(0.7,0.5),(0.9,0.7),(0.8,0.6),(0.7,0.5)]):
     displacement = [[],[],[]]
     rsens = [[],[],[]]
     ssens = [[],[],[]]
-    hi = random.uniform(0.65,1)
-    lo = random.uniform(0.5,hi-0.15)
+    # hi = random.uniform(0.65,1)
+    # lo = random.uniform(0.5,hi-0.15)
     if i < ntrials//2:
-        goals = lo,-hi
-    else:
         goals = hi,-lo
+    else:
+        goals = lo,-hi
         
     goal, goal2 = goals
 
@@ -92,22 +93,27 @@ for i in range(ntrials):
     ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),color="tab:green",label="goal")
     ax[0][i].plot(displacement[0],[sim.falsegoal]*len(displacement[0]),color="tab:red",label="bad-goal")
 
-    ax[0][i].set_title(f"Goal = {goal}\nA1 End Pos = {sim.senderPos:.2f},{sim.goal:.2f}\nA2 End Pos = {sim.receiverPos:.2f},{sim.goal2:.2f}\nFitness = {sim.fitness():.2f}")
+    ax[0][i].set_title(f"A1 goal, A2 goal = {sim.goal:.2f},{sim.goal2:.2f}\nA1 End Pos = {sim.senderPos:.2f}\nA2 End Pos = {sim.receiverPos:.2f}\nFitness = {sim.fitness():.2f}")
     ax[0][i].legend()
     ax[0][i].set_ylim([-1,1])
+    ax[0][0].set_ylabel("Position")
 
-    ax[1][i].plot(displacement[0],ssens[0],color="tab:olive",label="Contact")
+
+    ax[1][i].plot(displacement[0],ssens[0],color="tab:olive",label="Distance")
     ax[1][i].plot(displacement[0],ssens[1],color="tab:purple",label="Self Position")
     ax[1][i].plot(displacement[0],ssens[2],color="tab:cyan",label="Goal Distance")
     ax[1][i].set_title(f"A1 Sensors")
     ax[1][i].legend()
+    ax[1][0].set_ylabel("Value")
     ax[1][i].set_ylim([-1,1])
 
-    ax[2][i].plot(displacement[0],rsens[0],color="tab:olive",label="Contact")
+    ax[2][i].plot(displacement[0],rsens[0],color="tab:olive",label="Distance")
     ax[2][i].plot(displacement[0],rsens[1],color="tab:purple",label="Self Position")
     ax[2][i].plot(displacement[0],rsens[2],color="tab:cyan",label="Goal Distance")
     ax[2][i].set_title(f"A2 Sensors")
     ax[2][i].legend()
+    ax[2][0].set_ylabel("Value")
+    ax[2][i].set_xlabel("Time")
     ax[2][i].set_ylim([-1,1])
 
 
