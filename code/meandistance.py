@@ -24,7 +24,8 @@ with open(sys.argv[1],'r') as config:
     settings = json.load(config)
 simulation_seconds = settings.get("simulation_seconds",3)
 line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
-ub = 125
+# ub = 126
+ub = 301
 lb = 50
 
 def runtrial(c, goal):
@@ -36,8 +37,8 @@ def runtrial(c, goal):
     # print(goal,lb,ub)
     for goal2 in np.arange(-lb,-ub,step): #make me the whole range of other values
         # if abs(goal + goal2) < 15:
-            # fit.append(np.nan)
-            # continue
+        #     fit.append(np.nan)
+        #     continue
         if goal == -goal2:
             fit.append(np.nan)
             continue
@@ -106,7 +107,7 @@ def main():
     y = 15
     xs = [x]
     ys = [y]
-    while y < 50:
+    while y < 51:
         x += 1
         xs.append(x)
         ys.append(y)
@@ -120,7 +121,7 @@ def main():
     y = 0
     xs = [x]
     ys = [y]
-    while x < 50:
+    while x < 51:
         y += 1
         xs.append(x)
         ys.append(y)
@@ -129,8 +130,8 @@ def main():
         ys.append(y)
     ax.plot(xs,ys,c='r')
 
-    ax.plot(range(0,36),[50]*36,c='r')
-    ax.plot([50]*36,range(0,36),c='r')
+    ax.plot(range(0,37),[51]*37,c='r')
+    ax.plot([51]*37,range(0,37),c='r')
     plt.show()
 
     # fig, ax = plt.subplots(1,2)
