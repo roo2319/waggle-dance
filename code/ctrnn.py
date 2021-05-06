@@ -196,14 +196,25 @@ class Genome():
 
 if __name__ == '__main__':
     # Simple oscillator example, taken from Randall Beer
-    genome = Genome(0,2,0,[],[],np.array([[4.5,-1],[1,4.5]]),[-2.75,-1.75],None,None)
-    nn     = CTRNN(genome)
+    genome = Genome(0,2,0,[],np.array([[4.5,-1],[1,4.5]]),[-2.75,-1.75],None,None)
+    nn     = CTRNN(genome,0.01)
     nn.randomizeStates(-0.5,0.5)
     # exit()
     time = 0
-    while time < 250:
-        nn.eulerStep([],0.01)
+    out1 = []
+    out2 = []
+    while time < 10000:
+        nn.eulerStep([])
         time += 0.01
-        print(nn.outputs)
+        outputs = nn.outputs
+        out1.append(outputs[0])
+        out2.append(outputs[1])
 
+    import matplotlib.pyplot as plt
+    time = np.linspace(0,10000,len(out1))
+    plt.plot(time,out1)
+    plt.plot(time,out2)
+    plt.xlabel("Time")
+    plt.ylabel("Output Value")
+    plt.show()
     
