@@ -41,15 +41,15 @@ def fitness(genome,rs):
 
     random.seed(rs)
     for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), random.uniform(0.5,1)) for _ in range(ntrials)]:
-        sender = ctrnn.CTRNN(genome)
-        receiver = ctrnn.CTRNN(genome)
+        sender = ctrnn.CTRNN(genome,time_const)
+        receiver = ctrnn.CTRNN(genome,time_const)
         sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
 
         # Run the given simulation for up to num_steps time steps.
         fitness = 0.0
         while sim.t < simulation_seconds:
-            senderOut   = sender.eulerStep(sim.getState(True),time_const)[0]
-            receiverOut = receiver.eulerStep(sim.getState(False),time_const)[0]
+            senderOut   = sender.eulerStep(sim.getState(True))[0]
+            receiverOut = receiver.eulerStep(sim.getState(False))[0]
 
             sim.step(senderOut,receiverOut)
 
@@ -60,32 +60,7 @@ def fitness(genome,rs):
 
 
     return aggregate_fitness(fitnesses)/maxfitness
-
-
-def evaluate(genome, rs):
-    fitnesses = []
-
-    random.seed(rs)
-    for sp, rp, goal in [(random.uniform(0,0.3), random.uniform(0,0.3), x) for x in np.arange(0.5,1,0.01)]:
-        sender = ctrnn.CTRNN(genome)
-        receiver = ctrnn.CTRNN(genome)
-        sim = line_location.line_location(senderPos=sp,receiverPos=rp, goal=goal)
-
-        # Run the given simulation for up to num_steps time steps.
-        fitness = 0.0
-        while sim.t < simulation_seconds:
-            senderOut   = sender.eulerStep(sim.getState(True),time_const)[0]
-            receiverOut = receiver.eulerStep(sim.getState(False),time_const)[0]
-
-            sim.step(senderOut,receiverOut)
-
-        fitness = 1 if abs(sim.receiverPos - sim.goal) <= 0.05 else 0
-
-
-        fitnesses.append(fitness)
-
-
-    return statistics.mean(fitnesses)
+    
 
 def train(pop_size=100, max_gen=1, write_every=1, file=None):
 
@@ -96,9 +71,16 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
         generation = 0
         mcount = 0
         mcount2 = 0
+        best = None
+        best_fit = -1
         while generation < max_gen:
             rs = random.random()
             pop = evolve.assess(pop, pool, fitness,rs)
+
+            if pop[0].fitness > best_fit:
+                best = pop[0]
+                best_fit = pop[0].fitness
+
             if generation % 20 == 0 and file != None:
                 evolve.log_fitness(pop, generation, mcount2, None)
                 print(f"Batch Time {time.time()-batch_start}")
@@ -106,23 +88,18 @@ def train(pop_size=100, max_gen=1, write_every=1, file=None):
                 mcount2 = 0
                 with open("models/checkpoint.pkl",'wb') as g:
                     pickle.dump(pop[0].genome,g)
+
             if write_every and generation % write_every==0:
                 evolve.log_fitness(pop, generation, mcount, file)
                 mcount = 0
+
             generation += 1
             pop = evolve.sus(pop)
             pop, c = evolve.mutate(pop, pool, fitness,rs)
             mcount += c
             mcount2 += c
-
-            if generation % 100 == 0:
-                rs = random.random()
-                pop = evolve.assess(pop, pool, evaluate, rs)
-                print([x.fitness for x in pop])
-                
-        rs = random.random()
-        pop = evolve.assess(pop, pool, evaluate, rs)
-    return pop[0]
+    
+    return pop[0], best
 
 
 
@@ -133,8 +110,12 @@ def main():
     path = f"logs/{int(start)}.txt"
     with open(path,'w') as f:
         print(f"Logs are in {path}")
-        best = train(population_size,generations,file=f)
+        last, best = train(population_size,generations,file=f)
+        print(f"Last fitness: {last.fitness}")
         print(f"Best fitness: {best.fitness}")
+
+        with open("models/last_genome.pkl",'wb') as g:
+            pickle.dump(last.genome,g)
         with open("models/best_genome.pkl",'wb') as g:
             pickle.dump(best.genome,g)
     print(f"Finished training in {time.time() - start} seconds")

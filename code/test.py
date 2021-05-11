@@ -35,9 +35,10 @@ print("Initial conditions:")
 print("   Sender = {0:.4f}".format(sp))
 print(" Receiver = {0:.4f}".format(rp))
 print()
-fig, ax = plt.subplots(3,5)
+fig, ax = plt.subplots(3,3)
 i = 0
-for goal in [0.5,0.6,0.7,0.8,0.9]:
+# for goal in [0.5,0.6,0.7,0.8,0.9]:
+for goal in [0.5,0.7,0.9]:
     displacement = [[],[],[]]
     rsens = [[],[],[]]
     ssens = [[],[],[]]
@@ -45,8 +46,8 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
     time_const = line_location.line_location.timestep
 
 
-    sender = ctrnn.CTRNN(c)
-    receiver = ctrnn.CTRNN(c)
+    sender = ctrnn.CTRNN(c,time_const)
+    receiver = ctrnn.CTRNN(c,time_const)
 
     sender.reset()
     receiver.reset()
@@ -59,8 +60,8 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
         #     receiverstate[0] = 0
         #     senderstate[0] = 0
 
-        act1 = sender.eulerStep(senderstate,time_const)
-        act2 = receiver.eulerStep(receiverstate,time_const)
+        act1 = sender.eulerStep(senderstate)
+        act2 = receiver.eulerStep(receiverstate)
 
         vals.append(act1)
         vals.append(act2)
@@ -81,20 +82,25 @@ for goal in [0.5,0.6,0.7,0.8,0.9]:
             rsens[j].append(receiverstate[j])
             ssens[j].append(senderstate[j])
 
-    ax[0][i].plot(displacement[0],displacement[1],label="receiver")
-    ax[0][i].plot(displacement[0],displacement[2],label="sender")
-    ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),label="goal")
-    ax[0][i].set_title(f"Goal = {goal}\nReceiver = {sim.receiverPos:.2f}\nFitness = {sim.fitness():.2f}")
+    ax[0][i].plot(displacement[0],displacement[1],color="tab:blue",label="receiver")
+    ax[0][i].plot(displacement[0],displacement[2],color="tab:orange",label="sender")
+    ax[0][i].plot(displacement[0],[goal]*len(displacement[0]),color="tab:green",label="goal")
+    ax[0][i].set_title(f"Target Position = {goal}\nFinal Receiver Position = {sim.receiverPos:.2f}\nFitness = {sim.fitness():.2f}")
     ax[0][i].legend()
-    ax[1][i].plot(displacement[0],rsens[0],label="Contact")
-    ax[1][i].plot(displacement[0],rsens[1],label="Self Position")
+    ax[0][i].set_ylabel("Position")
+    ax[1][i].plot(displacement[0],rsens[0],color="tab:red",label="Contact")
+    ax[1][i].plot(displacement[0],rsens[1],color="tab:purple",label="Self Position")
     # ax[1][i].plot(displacement[0],rsens[2],label="Constant Value")
     ax[1][i].set_title(f"Receiver Sensors")
     ax[1][i].legend()
-    ax[2][i].plot(displacement[0],ssens[0],label="Contact")
-    ax[2][i].plot(displacement[0],ssens[1],label="Self Position")
-    ax[2][i].plot(displacement[0],ssens[2],label="Goal Distance")
+    ax[1][i].set_ylabel("Value")
+
+    ax[2][i].plot(displacement[0],ssens[0],color="tab:red",label="Contact")
+    ax[2][i].plot(displacement[0],ssens[1],color="tab:purple",label="Self Position")
+    ax[2][i].plot(displacement[0],ssens[2],color="tab:cyan",label="Goal Distance")
     ax[2][i].set_title(f"Sender Sensors")
+    ax[2][i].set_ylabel("Value")
+    ax[2][i].set_xlabel("Time")
     ax[2][i].legend()
     i+=1
         # print(sim.getAsciiState())

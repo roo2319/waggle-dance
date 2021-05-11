@@ -14,22 +14,22 @@ class CTRNN():
         genome (Genome)
     """
     
-    def __init__(self, genome=None):
+    def __init__(self, genome=None,timestep=1):
         if genome == None:
             genome = Genome()
         self.inputsCount   = genome.inputsCount
         self.outputCount   = genome.outputsCount
         self.hiddenCount   = genome.hiddenCount
         self.inputWeights  = np.pad(genome.inputWeights,(0,self.hiddenCount - len(genome.inputWeights)))
-        self.outputWeights = np.pad(genome.outputWeights,(0,self.hiddenCount - len(genome.outputWeights)))
+        self.paddedInputs = np.zeros(self.hiddenCount)
         self.weights       = genome.weights
         self.biases        = genome.biases
-        self.gains         = genome.gains
         self.states        = np.zeros((genome.hiddenCount))
-        self.outputs       = expit(np.multiply(self.gains,(self.states + self.biases)))
+        self.outputs       = expit((self.states + self.biases))
         self.rTaus         = genome.rTaus
+        self.sTaus         = self.rTaus * timestep
 
-    def eulerStep(self,externalInputs,stepsize):
+    def eulerStep(self,externalInputs):
         """
         Advance the CTRNN by (stepsize), setting the inputs to the network to
         externalInputs
@@ -41,24 +41,24 @@ class CTRNN():
         Return:
             The outputs of the network at this timestep
         """
-        # externalInputs = np.pad(externalInputs,(0,self.hiddenCount-len(externalInputs)))
-        paddedInputs = np.zeros(self.hiddenCount)
-        paddedInputs[:self.inputsCount] = externalInputs
+        self.paddedInputs[:self.inputsCount] = externalInputs
+
         # First we calculate the change for each hidden node based on external inputs
-        delta = np.multiply(paddedInputs, self.inputWeights) + np.matmul(self.outputs, self.weights)
+        delta = np.multiply(self.paddedInputs, self.inputWeights) + np.dot(self.outputs, self.weights) 
+
         # Then we update the state of each hidden node
-        self.states += np.multiply(stepsize * self.rTaus, (delta - self.states))
-        # Lastly we can update the outputs of each hidden node
-        self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
+        self.states += np.multiply(self.sTaus, (delta - self.states)) 
+
         # We can now calculate the external output. 
-        return np.multiply(self.outputWeights,self.outputs)[:self.outputCount]
+        self.outputs = expit((self.states + self.biases)) 
+        return self.outputs[:self.outputCount] 
     
     def reset(self):
         """
         Set the internal states of the network to 0
         """
         self.states  = np.zeros(self.states.shape)
-        self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
+        self.outputs = expit((self.states + self.biases))
 
     def randomizeStates(self,low,high):
         """
@@ -69,7 +69,7 @@ class CTRNN():
             high (float)
         """
         self.states  = np.random.uniform(low,high,self.states.shape)
-        self.outputs = expit(np.multiply(self.gains,(self.states + self.biases)))
+        self.outputs = expit((self.states + self.biases))
         
 
 class Genome():
@@ -84,18 +84,15 @@ class Genome():
         outputsCount (int) : The number of output nodes in the network, < hiddenCount
         iWeights (np.array(float)) : A 1d list of weights from each input node to 
                                      a hidden nodelength = inputsCount
-        oWeights (np.array(float)) : A 1d list of weights from each hidden node to 
-                                     it's connected output node, length = outputsCount
         weights (np.array(float))  : A 2d array of weights between each hidden node,
                                      shape = (hiddenCount,hiddenCount)
         biases (np.array(float))   : The biases of each hidden node, length = hiddenCount
-        gains (np.array(float))    : The gains of each hidden node, length = hiddenCount
         taus  (np.array(float))    : The time constants of each hidden node, length = hiddenCount
         centerCrossing (bool)      : Determine if the CTRNN should be center crossing
 
     """
-    def __init__(self,inputsCount=3,hiddenCount=3,outputsCount=1,iWeights=None,oWeights=None,weights=None,
-                biases=None, gains=None, taus=None, centerCrossing = False):
+    def __init__(self,inputsCount=3,hiddenCount=3,outputsCount=1,iWeights=None,weights=None,
+                biases=None, taus=None, centerCrossing = False):
         # Weights = 2D array 
         self.inputsCount  = inputsCount
         self.hiddenCount  = hiddenCount
@@ -109,11 +106,7 @@ class Genome():
             # iWeights = np.zeros(inputsCount)
         self.inputWeights = iWeights
         
-        if oWeights is None:
-            # oWeights = np.random.normal(scale=2,size=(outputsCount))
-            # oWeights = np.random.uniform(-16,16,size=(outputsCount))
-            oWeights = np.ones(outputsCount)
-        self.outputWeights = oWeights
+
 
         if weights is None:
             # weights = np.random.normal(scale=2,size=(hiddenCount,hiddenCount))
@@ -129,13 +122,6 @@ class Genome():
             # biases = np.ones(hiddenCount)
 
         self.biases = biases
-
-        if gains is None:
-            # gains = np.random.normal(scale=2,size=(hiddenCount))
-            # gains = np.random.uniform(-25,25,size=(hiddenCount))
-            gains = np.ones((hiddenCount))
-
-        self.gains = gains
 
         if taus is None:
             # taus = np.ones((hiddenCount))
@@ -156,15 +142,12 @@ class Genome():
         self.outputWeights += np.random.normal(0,stddev,self.outputWeights.shape)
         self.weights       += np.random.normal(0,stddev,self.weights.shape)
         self.biases        += np.random.normal(0,stddev,self.biases.shape)
-        # self.gains         += np.random.normal(0,stddev,self.gains.shape)
         self.taus          += np.random.normal(0,stddev,self.taus.shape)
 
         
         self.inputWeights   = np.clip(self.inputWeights,-16,16)
-        self.outputWeights  = np.clip(self.outputWeights,-16,16)
         self.weights        = np.clip(self.weights,-16,16)
         self.biases         = np.clip(self.biases,-16,16)
-        # self.gains          = np.clip(self.gains,-10,10)
         self.taus           = np.clip(self.taus,50,100)
         self.rTaus          = np.reciprocal(self.taus)
 
@@ -181,12 +164,10 @@ class Genome():
         self.weights       += 16 * mutationvector[self.inputsCount:self.inputsCount+(self.hiddenCount*self.hiddenCount)].reshape((self.hiddenCount,self.hiddenCount))
         self.biases        += 16 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount):self.inputsCount+(self.hiddenCount*self.hiddenCount)+self.hiddenCount]
         self.taus          += 25 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount)+(self.hiddenCount):self.inputsCount+(self.hiddenCount*self.hiddenCount)+2*(self.hiddenCount)]
-        # self.outputWeights += 16 * mutationvector[self.inputsCount+(self.hiddenCount*self.hiddenCount)+2*(self.hiddenCount):]
 
         self.inputWeights   = np.clip(self.inputWeights,-16,16)
         self.weights        = np.clip(self.weights,-16,16)
         self.biases         = np.clip(self.biases,-16,16)
-        # self.gains          = np.clip(self.gains,-10,10)
         self.taus           = np.clip(self.taus,50,100)
         self.rTaus          = np.reciprocal(self.taus)
 
@@ -199,8 +180,8 @@ class Genome():
             A genome object that is identical to the caller
         """
         return Genome(inputsCount=self.inputsCount, hiddenCount=self.hiddenCount, outputsCount=self.outputsCount, iWeights=np.copy(self.inputWeights),
-                      oWeights=np.copy(self.outputWeights), weights=np.copy(self.weights), biases=np.copy(self.biases),
-                      gains=np.copy(self.gains), taus=np.copy(self.taus))
+                      weights=np.copy(self.weights), biases=np.copy(self.biases),
+                      taus=np.copy(self.taus))
     
     def __str__(self):
         """
@@ -209,8 +190,8 @@ class Genome():
         Return:
             String
         """
-        return f"Input Weights: {self.inputWeights} \nOutput weights: {self.outputWeights}\n" +\
-               f"Weights: {self.weights} \nBiases: {self.biases} \n Gains: {self.gains} \n Taus: {self.taus}"
+        return f"Input Weights: {self.inputWeights} \n" +\
+               f"Weights: {self.weights} \nBiases: {self.biases} \nTaus: {self.taus}"
         
 
 if __name__ == '__main__':

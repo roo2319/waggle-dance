@@ -30,8 +30,8 @@ def runtrial(c, goal):
         sim = line_location.line_location(senderPos=sp,receiverPos=rp,goal=goal)
         time_const = line_location.line_location.timestep
 
-        sender = ctrnn.CTRNN(c)
-        receiver = ctrnn.CTRNN(c)
+        sender = ctrnn.CTRNN(c,time_const)
+        receiver = ctrnn.CTRNN(c,time_const)
 
         sender.reset()
         receiver.reset()
@@ -39,8 +39,8 @@ def runtrial(c, goal):
         while sim.t < simulation_seconds:
             senderstate = sim.getState(True)
             receiverstate = sim.getState(False)
-            act1 = sender.eulerStep(senderstate,time_const)
-            act2 = receiver.eulerStep(receiverstate,time_const)
+            act1 = sender.eulerStep(senderstate)
+            act2 = receiver.eulerStep(receiverstate)
 
             senderOut = act1[0]
             receiverOut = act2[0]

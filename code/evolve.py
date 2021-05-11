@@ -5,13 +5,9 @@ import random
 mutationRate = 0.447
 centerCrossing = False
 class Citizen():
-    def __init__(self,genome=None,fitness=0,age=0,shape=None):
+    def __init__(self,genome=None,fitness=0,age=0):
         if genome == None:
-            if shape == None:
-                genome = ctrnn.Genome(centerCrossing=centerCrossing)
-            else:
-                icount, hcount, ocount = shape
-                genome = ctrnn.Genome(inputsCount=icount,hiddenCount=hcount,outputsCount=ocount)
+            genome = ctrnn.Genome(centerCrossing=centerCrossing)
         self.genome = genome
         self.fitness = fitness
         self.age = age
@@ -19,9 +15,9 @@ class Citizen():
         self.rfitness = None
     
     def copy(self):
-        return Citizen(genome=self.genome.copy(),fitness=self.fitness,age=self.age)
+        return Citizen(self.genome.copy(),self.fitness,self.age)
 
-def assess(pop, pool, fitness,rs,goal=None):
+def assess(pop, pool, fitness,rs):
     """
     Calculate fitness score for each member across the given population
 
@@ -34,11 +30,11 @@ def assess(pop, pool, fitness,rs,goal=None):
         The population, sorted by their newly assessed fitness scores 
     """
 
-    pop = [(x,fitness,rs,goal) for x in pop]
+    pop = [(x,fitness,rs) for x in pop]
     pop = pool.starmap(assess_item, pop)
     return sorted(pop, key = lambda i: i.fitness, reverse=True) 
 
-def assess_item(item,fitness,rs,goal):
+def assess_item(item,fitness,rs):
     """
     Calculate the fitness of a single genome
 
@@ -50,13 +46,10 @@ def assess_item(item,fitness,rs,goal):
         item, with an updated fitness value
 
     """
-    if goal == None:
-        item.fitness = fitness(item.genome,rs)
-    else:
-        item.fitness = fitness(item.genome,rs,goal)
+    item.fitness = fitness(item.genome,rs)
     return item
 
-def mutate(pop, pool,fitness,rs,goal=None):
+def mutate(pop, pool,fitness,rs):
     """
     Mutate each member of the population
 
@@ -69,14 +62,14 @@ def mutate(pop, pool,fitness,rs,goal=None):
         pop, with a mutation applied to each member
 
     """
-    pop = [(x,fitness,rs,goal) for x in pop]
+    pop = [(x,fitness,rs) for x in pop]
     result = pool.starmap(mutate_item,pop)
     pop = [x[0] for x in result]
     
     # pop = [x[0] for x in pop]
     return sorted(pop, key = lambda i: i.fitness, reverse=True), sum(x[1] for x in result)
 
-def mutate_item(item,fitness,rs,goal):
+def mutate_item(item,fitness,rs):
     """
     Mutate a single genome, only keep the result if it's better than the parent
 
@@ -90,12 +83,9 @@ def mutate_item(item,fitness,rs,goal):
 
     child = item.genome.copy()
     child.beerMutate(mutationRate)
-    if goal == None:
-        cfitness = fitness(child,rs)
-    else:
-        cfitness = fitness(child,rs,goal)
+    cfitness = fitness(child,rs)
     if cfitness >= item.fitness:
-        return Citizen(genome=child,fitness=cfitness), 1
+        return Citizen(child,cfitness), 1
     item.age += 1
     return item, 0
 
@@ -116,7 +106,7 @@ def rank_reduce(fitnesses):
 def min_fitness(fitnesses):
     return min(fitnesses)
 
-def initialise(pop_size,shape=None):
+def initialise(pop_size):
     """
     Initialise a population of random genomes
 
@@ -132,7 +122,7 @@ def initialise(pop_size,shape=None):
 
     pop = []
     while len(pop)<pop_size:
-        pop.append(Citizen(shape=shape))
+        pop.append(Citizen())
 
     return pop
 
@@ -173,7 +163,7 @@ def sus(pop,size=None):
     while len(newpop) < size:
         if rand < sum:
             # if you don't create a new citizen bad things happen
-            newpop.append(Citizen(genome=pop[i].genome,fitness=pop[i].fitness,age=pop[i].age))
+            newpop.append(Citizen(pop[i].genome,pop[i].fitness,pop[i].age))
             rand += 1
             continue
         i += 1

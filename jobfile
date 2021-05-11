@@ -1,0 +1,22 @@
+#!/bin/bash
+
+#SBATCH --job-name waggle-dance
+#SBATCH --nodes 1
+#SBATCH --time 28:00:00
+#SBATCH --partition cpu
+#SBATCH --output waggle.out
+#SBATCH --exclusive
+
+module load languages/anaconda3/2020.02-tflow-2.2.0
+
+for RUN in {1..100}
+do
+	python -u ./code/train.py ./configurations/true_campos.json
+	python -u ./code/evaluate.py ./configurations/true_campos.json ./models/best_genome.pkl 2500
+	python -u ./code/evaluate.py ./configurations/true_campos.json ./models/last_genome.pkl 2500
+
+	
+	mv ./models/best_genome.pkl  ./models/best_$RUN.pkl
+	mv ./models/last_genome.pkl  ./models/last_$RUN.pkl
+
+done
