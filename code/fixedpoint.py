@@ -33,24 +33,23 @@ ntrials = 6
 positions = (0,0)
 # positions = (0.3,0.05)
 # for i in range(ntrials):
-# inputs = [0,0,-0.73]
+inputs = [0,0,-0.73]
 # This is decoupled, what would coupled look like?
-for _ in range(100):
-    inputs = [np.random.uniform(-1,1),np.random.uniform(-1,1),np.random.uniform(-1,1)]
+for _ in range(1):
+    # inputs = [np.random.uniform(-1,1),np.random.uniform(-1,1),np.random.uniform(-1,1)]
     print(inputs)
     fig = plt.figure()
     ax = plt.axes(projection="3d")
     for state in itertools.product([-10,10],repeat=3):
         # state = [np.random.uniform(-10,10),np.random.uniform(-10,10),np.random.uniform(-10,10)]
+        
         states = state
         t = 0
             
         time_const = line_location.line_location.timestep
 
-
         brain = ctrnn.CTRNN(c,time_const)
-
-        brain.reset()
+        brain.setStates(np.array(state,dtype=np.float64))
         # Run the given simulation for up to num_steps time steps.
         while t < 10000:
             # if sim.t < 1.5:
@@ -64,7 +63,7 @@ for _ in range(100):
         
         ax.plot3D(states[:,0],states[:,1],states[:,2])
         print(states[-1])
-        ax.scatter3D(states[::100,0],states[::100,1],states[::100,2])
+        ax.scatter3D(states[::10,0],states[::10,1],states[::10,2])
         ax.set_xlabel("Neuron 1")
         ax.set_ylabel("Neuron 2")
         ax.set_zlabel("Neuron 3")

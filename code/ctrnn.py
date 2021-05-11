@@ -71,6 +71,16 @@ class CTRNN():
         self.states  = np.random.uniform(low,high,self.states.shape)
         self.outputs = expit((self.states + self.biases))
         
+    def setStates(self,states):
+        """
+        Set the internal states of the network to fixed values given in states
+
+        Parameters: 
+            states (array of floats) - must have same dimensions as the original states!
+        """
+        assert(self.states.shape == states.shape)
+        self.states  = states
+        self.outputs = expit((self.states + self.biases))
 
 class Genome():
     """
