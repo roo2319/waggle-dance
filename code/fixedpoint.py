@@ -33,10 +33,10 @@ ntrials = 6
 positions = (0,0)
 # positions = (0.3,0.05)
 # for i in range(ntrials):
-inputs = [0,0,-0.73]
 # This is decoupled, what would coupled look like?
-for _ in range(1):
-    # inputs = [np.random.uniform(-1,1),np.random.uniform(-1,1),np.random.uniform(-1,1)]
+# inplist = [[0,-0.34,-0.6]]
+inplist = [[np.random.uniform(-1,1),np.random.uniform(-1,1),np.random.uniform(-1,1)] for _ in range(10)]
+for inputs in inplist:
     print(inputs)
     fig = plt.figure()
     ax = plt.axes(projection="3d")
