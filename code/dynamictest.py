@@ -31,37 +31,31 @@ ntrials = 3
 goal = 1
 low = -0.5
 high = -1
-fig,ax = plt.subplots(2,1)
+fig,ax = plt.subplots(3,1)
 # for goal in np.linspace(0.5,1,50):
-for goal in [0.5,1]:
+goals = [-0.5,-0.6,-0.7]
+for i,goal2 in enumerate(goals):
     first = True
-    if goal == 1:
-        high = -0.85
-    for goal2 in np.linspace(low,high,25):
-            print(goal,goal2)
+    low = abs(goal2) + 0.15
+    for goal in np.linspace(low,1,25):
             if abs(goal + goal2) < 0.15:
+                print("...")
                 continue
-        
+            col = 'tab:blue'
+            a = 0.1
             if first:
                 first = False
                 col = 'r'
                 a = 1
-            elif goal2 == high:
+            elif goal == 1:
                 col = 'g'
                 a = 1
-            elif goal == 0.5:
-                col = 'tab:pink'
-                a = 0.1
-            else:
-                col = 'tab:cyan'
-                a = 0.1
         
             displacement = [[],[],[]]
             rsens = [[],[],[]]
             ssens = [[],[],[]]
         
-            # sim = line_location.line_location(senderPos=0,receiverPos=0,goal=goal,goal2=goal2)
-            sim = line_location.line_location(senderPos=0,receiverPos=0,goal=goal2,goal2=goal)
+            sim = line_location.line_location(senderPos=0,receiverPos=0,goal=goal,goal2=goal2)
 
             time_const = line_location.line_location.timestep
         
@@ -103,8 +97,9 @@ for goal in [0.5,1]:
                     rsens[j].append(receiverstate[j])
                     ssens[j].append(senderstate[j])
         
-            ax[0].plot(displacement[0],displacement[2],col if col is not None else 'tab:blue',alpha=a,label="sender")
-            ax[1].plot(displacement[0],displacement[1],col if col is not None else 'tab:orange',alpha=a,label="receiver")
+            ax[i].plot(displacement[0],displacement[2],col,alpha=a,label="sender")
+            ax[i].title.set_text(f"Other goal = {goal2}")
+            # ax[1].plot(displacement[0],displacement[1],col if col is not None else 'tab:orange',alpha=a,label="receiver")
             # ax[0].plot(displacement[0],displacement[2],'tab:blue',alpha=0.1,label="sender")
             # ax[1].plot(displacement[0],displacement[1],'tab:orange',alpha=0.1,label="receiver")
     
@@ -121,8 +116,6 @@ for goal in [0.5,1]:
 
 # ax[0].set_title(f"A1 Position (Fixed Goal)")
 # ax[1].set_title(f"A2 Position (Variable Goal)")
-ax[0].set_title(f"A1 Position (Variable Goal)")
-ax[1].set_title(f"A2 Position (Fixed Goal)")
 # plt.legend()
 # plt.set_ylim([-1,1])
 plt.show()
