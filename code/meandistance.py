@@ -14,7 +14,7 @@ import numpy as np
 import ctrnn
 import line_location
 
-simulation_seconds = 3
+simulation_seconds = 300
 
 if len(sys.argv) < 3:
     print("Usage: py ./meandistance.py config.json genome_name.pkl")
@@ -22,10 +22,10 @@ if len(sys.argv) < 3:
 
 with open(sys.argv[1],'r') as config:
     settings = json.load(config)
-simulation_seconds = settings.get("simulation_seconds",3)
+simulation_seconds = settings.get("simulation_seconds",300)
 line_location.motorFunction = line_location.motors[settings.get("motor","clippedMotor1")]
 # ub = 126
-ub = 301
+ub = 101
 lb = 50
 
 def runtrial(c, goal):
@@ -36,9 +36,9 @@ def runtrial(c, goal):
     count = 0 
     # print(goal,lb,ub)
     for goal2 in np.arange(-lb,-ub,step): #make me the whole range of other values
-        # if abs(goal + goal2) < 15:
-        #     fit.append(np.nan)
-        #     continue
+        if abs(goal + goal2) < 15:
+            fit.append(np.nan)
+            continue
         if goal == -goal2:
             fit.append(np.nan)
             continue
