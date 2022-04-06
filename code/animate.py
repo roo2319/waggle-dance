@@ -80,8 +80,8 @@ def runtrial(c, task):
         history_c = len(sender_positions)
         history_ys = range(-history_c+1,1)
 
-        plt.scatter(sender_positions,history_ys,c="blue",alpha=alphalist) 
-        plt.scatter(receiver_positions,history_ys,c="orange",alpha=alphalist) 
+        plt.plot(sender_positions,history_ys,c="blue") 
+        plt.plot(receiver_positions,history_ys,c="orange") 
 
         plt.savefig(f"./frames/{sim.t+i}")
         plt.close()
