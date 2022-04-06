@@ -31,8 +31,8 @@ def runtrial(c, task):
 
     sender.reset()
     receiver.reset()
-    old_sender_positions = []
-    old_receiver_positions = []
+    sender_positions = []
+    receiver_positions = []
     # Run the given simulation for up to num_steps time steps.
     while sim.t < simulation_seconds:
         senderstate = sim.getState(True)
@@ -44,33 +44,45 @@ def runtrial(c, task):
         receiverOut = act2[0]
 
         sim.step(senderOut,receiverOut)
+        sender_positions.append(sim.senderPos)
+        receiver_positions.append(sim.receiverPos)
         plt.figure()
-        plt.hlines(0,0,1,colors='black')
-        plt.vlines(0.3,-0.5,sim.t,colors='black',linestyles='dotted')
-        plt.vlines(goal,-0.5,sim.t,colors='green',linestyles='dotted')
-        plt.scatter([sim.senderPos,sim.receiverPos],[0,0],c=['blue','orange'])
+        plt.xlim(left=0,right=1.2)
+        plt.ylim(bottom=0,top=-300)
+        plt.xlabel("Position")
+        plt.ylabel("Time")
+        
+        plt.vlines(0.3,0,-300,colors='black',linestyles='dotted')
+        plt.vlines(goal,0,-300,colors='green',linestyles='dotted')
 
-        history_c = len(old_sender_positions)
+        history_c = len(sender_positions)
+        history_ys = range(-history_c+1,1)
         alphalist = [i/history_c for i in range(history_c)] if history_c != 0 else 1
-        plt.scatter(old_sender_positions,range(history_c,0,-1),c="blue",alpha=alphalist) 
-        plt.scatter(old_receiver_positions,range(history_c,0,-1),c="orange",alpha=alphalist) 
+        
+        plt.scatter(sender_positions,history_ys,c="blue",alpha=alphalist) 
+        plt.scatter(receiver_positions,history_ys,c="orange",alpha=alphalist) 
 
         plt.savefig(f"./frames/{sim.t}")
         plt.close()
-        old_sender_positions.append(sim.senderPos)
-        old_receiver_positions.append(sim.receiverPos)
         # print(sim.getAsciiState())
         
     # 2 second pause at the end
     for i in range(1,49):
         plt.figure()
-        plt.hlines(0,0,1,colors='black')
+        plt.xlim(left=0,right=1.2)
+        plt.ylim(bottom=0,top=-300)
+        plt.xlabel("Position")
+        plt.ylabel("Time")
+
         plt.vlines(0.3,-0.5,sim.t,colors='black',linestyles='dotted')
         plt.vlines(goal,-0.5,sim.t,colors='green',linestyles='dotted')
         
-        history_c = len(old_sender_positions)
-        plt.scatter(old_sender_positions,range(history_c,0,-1),c="blue") 
-        plt.scatter(old_receiver_positions,range(history_c,0,-1),c="orange") 
+        history_c = len(sender_positions)
+        history_ys = range(-history_c+1,1)
+
+        plt.plot(sender_positions,history_ys,c="blue") 
+        plt.plot(receiver_positions,history_ys,c="orange") 
+
 
         plt.savefig(f"./frames/{sim.t+i}")
         plt.close()
